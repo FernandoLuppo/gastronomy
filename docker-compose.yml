@@ -1,0 +1,66 @@
+version: "3.8"
+
+networks:
+  gastronomy-network:
+    driver: bridge
+
+volumes:
+  mongo-vol: {}
+  mongo-vol-test: {}
+
+services:
+  nextjs:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - node-api
+      - mongodb
+      - mongodb-test
+    networks:
+      - gastronomy-network
+
+  node-api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      MONGO_URI: ${MONGO_URI}
+    depends_on:
+      - mongodb
+      - mongodb-test
+    networks:
+      - gastronomy-network
+    volumes:
+      - ./server/src:/app/src
+    command: yarn dev
+
+  mongodb:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-vol:/data/db
+    networks:
+      - gastronomy-network
+
+  mongodb-test:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME_TEST}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_USERNAME_TEST}
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo-vol-test:/data/db
+    networks:
+      - gastronomy-network
