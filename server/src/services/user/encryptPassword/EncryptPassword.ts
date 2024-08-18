@@ -14,11 +14,12 @@ export class EncryptPassword {
 
       return { encryptedUserPassword, success: true }
     } catch (error) {
+      console.log(error)
       return { error, success: false }
     }
   }
 
-  public async decrypt(comparePassword: string) {
+  public async decrypt({ comparePassword }: { comparePassword: string }) {
     try {
       const matchPasswords = await bcryptjs.compare(
         this._password,
@@ -29,6 +30,7 @@ export class EncryptPassword {
 
       return { success: true }
     } catch (error) {
+      console.log(error)
       return { error, success: false }
     }
   }

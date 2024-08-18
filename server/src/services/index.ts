@@ -1,1 +1,2 @@
-export * from './user/User'
+export * from './user/UserService'
+export * from './token/TokenService'
