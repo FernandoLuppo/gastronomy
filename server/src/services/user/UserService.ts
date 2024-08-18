@@ -1,7 +1,6 @@
 import { Request } from 'express'
 import User from '../../models/user/User'
-import { EncryptPassword } from './encryptPassword/EncryptPassword'
-import { TokenService } from '../token/TokenService'
+import { ILogin, IEncryptPassword } from '../../types'
 
 export class UserService {
   public constructor(private readonly _req: Request) {}
@@ -19,10 +18,13 @@ export class UserService {
     }
   }
 
-  public async updatePersonalInfos() {
+  public async updatePersonalInfos({ encryptPassword }: IEncryptPassword) {
     try {
       const data = this._req.body
       const _id = this._req.user?.token.sub
+
+      const newPassword = encryptPassword.encrypt()
+      data.password = newPassword
 
       const user = await User.updateOne(
         { _id },
@@ -40,10 +42,7 @@ export class UserService {
     }
   }
 
-  public async login(
-    tokenService: TokenService,
-    encryptPassword: EncryptPassword
-  ) {
+  public async login({ encryptPassword, tokenService }: ILogin) {
     try {
       const { email } = this._req.body
       const user = await User.findOne({ email })
@@ -69,7 +68,7 @@ export class UserService {
     }
   }
 
-  public async register(encryptPassword: EncryptPassword) {
+  public async register({ encryptPassword }: IEncryptPassword) {
     try {
       const data = this._req.body
 
@@ -95,7 +94,7 @@ export class UserService {
 
       await User.deleteOne({ _id })
 
-      return { message: 'User deleted with success.', success: true }
+      return { success: true }
     } catch (error) {
       console.error('Error in delete user account:', error)
       return { error, success: false }
