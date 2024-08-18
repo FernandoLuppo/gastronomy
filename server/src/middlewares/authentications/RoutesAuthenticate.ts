@@ -15,6 +15,7 @@ export class routesAuthenticate {
       })
       this._next()
     } catch (error) {
+      console.log(error)
       this._res.status(401).send({ error, success: false })
     }
   }
@@ -26,6 +27,7 @@ export class routesAuthenticate {
       })
       this._next()
     } catch (error) {
+      console.log(error)
       this._res.status(401).send({ error, success: false })
     }
   }
@@ -37,6 +39,7 @@ export class routesAuthenticate {
       })
       this._next()
     } catch (error) {
+      console.log(error)
       this._res.status(401).send({ error, success: false })
     }
   }
