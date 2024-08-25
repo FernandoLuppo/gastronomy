@@ -1,29 +1,23 @@
-import { Request } from 'express'
 import User from '../../models/user/User'
-import { ILogin, IEncryptPassword } from '../../types'
+import { decrypt, encrypt } from './encryptPassword'
+import { tokenService } from '../token'
 
-export class UserService {
-  public constructor(private readonly _req: Request) {}
-
-  public async userPersonalInfos() {
+export const userService = {
+  userPersonalInfos: async ({ _id }: { _id: string }) => {
     try {
-      const _id = this._req.user?.token.sub
       const user = await User.findOne({ _id }).select('-password')
       if (!user) throw new Error('User not found!')
 
       return { user, success: true }
     } catch (error) {
-      console.error('Error when try to get user personal infos:', error)
+      console.error('Error when trying to get user personal infos:', error)
       return { error, success: false }
     }
-  }
+  },
 
-  public async updatePersonalInfos({ encryptPassword }: IEncryptPassword) {
+  updatePersonalInfos: async ({ data, _id }: { data: any; _id: string }) => {
     try {
-      const data = this._req.body
-      const _id = this._req.user?.token.sub
-
-      const newPassword = encryptPassword.encrypt()
+      const newPassword = encrypt({ password: data.password })
       data.password = newPassword
 
       const user = await User.updateOne(
@@ -40,15 +34,15 @@ export class UserService {
       console.error('Error in update user infos:', error)
       return { error, success: false }
     }
-  }
+  },
 
-  public async login({ encryptPassword, tokenService }: ILogin) {
+  login: async ({ email, password }: { email: string; password: string }) => {
     try {
-      const { email } = this._req.body
       const user = await User.findOne({ email })
       if (!user) throw new Error('User not found!')
 
-      const { success } = await encryptPassword.decrypt({
+      const { success } = await decrypt({
+        password,
         comparePassword: user.password as string
       })
       if (!success) throw new Error('Email or password incorrect!')
@@ -66,15 +60,15 @@ export class UserService {
       console.error('Error in login:', error)
       return { error, success: false }
     }
-  }
+  },
 
-  public async register({ encryptPassword }: IEncryptPassword) {
+  register: async ({ data }: { data: any }) => {
     try {
-      const data = this._req.body
+      const { success, encryptedUserPassword } = encrypt({
+        password: data.password
+      })
 
-      const { success, encryptedUserPassword } = encryptPassword.encrypt()
-
-      if (!success) throw new Error('Error in encrypt password!')
+      if (!success) throw new Error('Error in encrypting password!')
 
       data.password = encryptedUserPassword
       const user = await User.create(data)
@@ -83,20 +77,18 @@ export class UserService {
 
       return { success: true }
     } catch (error) {
-      console.error('Error in register user:', error)
+      console.error('Error in registering user:', error)
       return { error, success: false }
     }
-  }
+  },
 
-  public async deleteAccount() {
+  deleteAccount: async ({ _id }: { _id: string }) => {
     try {
-      const { _id } = this._req.query
-
       await User.deleteOne({ _id })
 
       return { success: true }
     } catch (error) {
-      console.error('Error in delete user account:', error)
+      console.error('Error in deleting user account:', error)
       return { error, success: false }
     }
   }

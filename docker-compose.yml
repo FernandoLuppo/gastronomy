@@ -21,6 +21,9 @@ services:
       - mongodb-test
     networks:
       - gastronomy-network
+    volumes:
+      - ./client:/app
+      - /app/node_modules
 
   node-api:
     build:
