@@ -1,4 +1,4 @@
-import { IToken } from './token/token'
+import { IToken } from './token'
 
 declare global {
   namespace Express {

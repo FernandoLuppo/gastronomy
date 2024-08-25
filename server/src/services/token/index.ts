@@ -15,15 +15,13 @@ const EMAIL_TOKEN_EXPIRES_IN = 5 // Minutes
 const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, EMAIL_TOKEN_SECRET } =
   process.env
 
-export class TokenService {
-  public constructor() {}
-
-  public async createUserToken({ _id, content }: IPayload) {
+export const tokenService = {
+  createUserToken: async ({ _id, content }: IPayload) => {
     try {
       if (!ACCESS_TOKEN_SECRET || !REFRESH_TOKEN_SECRET)
         throw new Error('Token secret is missing!')
 
-      const accessToken = this._createToken({
+      const accessToken = _createToken({
         payload: {
           content,
           role: 'accessToken'
@@ -35,7 +33,7 @@ export class TokenService {
       if (!accessToken.success)
         throw new Error('Error in access token creation.')
 
-      const refreshToken = this._createToken({
+      const refreshToken = _createToken({
         payload: {
           content,
           role: 'refreshToken'
@@ -57,7 +55,7 @@ export class TokenService {
         userToken: _id
       }
 
-      await this._saveToken({ _id, refreshToken: newRefreshToken })
+      await _saveToken({ _id, refreshToken: newRefreshToken })
 
       return {
         success: true,
@@ -70,13 +68,13 @@ export class TokenService {
       console.error('Error in creating user token:', error)
       return { success: false, error }
     }
-  }
+  },
 
-  public emailToken({ _id, content }: IPayload) {
+  createEmailToken: ({ _id, content }: IPayload) => {
     try {
       if (!EMAIL_TOKEN_SECRET) throw new Error('Token secret is missing!')
 
-      const emailToken = this._createToken({
+      const emailToken = _createToken({
         payload: {
           content,
           role: 'emailToken'
@@ -92,16 +90,17 @@ export class TokenService {
       console.error('Error in creating email token:', error)
       return { success: false, error }
     }
-  }
+  },
 
-  public validateToken({ req, token, secret }: ITokenValidate) {
+  validateToken: ({ req, token, secret }: ITokenValidate) => {
     try {
-      const secretKey = this._searchTokenSecretKey({ secret })
+      const secretKey = _searchTokenSecretKey({ secret })
       if (!secretKey) throw new Error('Token secret key is undefined!')
 
       const decodedToken = verify(token, secretKey) as IToken
-      if (!decodedToken.sub) {
-        req.user.token = {
+
+      req.user = {
+        token: {
           sub: decodedToken.sub,
           payload: decodedToken.payload
         }
@@ -112,47 +111,66 @@ export class TokenService {
       console.error('Error in validation token:', error)
       return { success: false, error }
     }
-  }
+  },
 
-  private _createToken({ payload, sub, expiresIn, secret }: ICreateToken) {
+  extractTokenFromHeader: ({ authorization }: { authorization: string }) => {
     try {
-      const token = sign(payload, secret, {
-        subject: sub,
-        expiresIn
-      })
+      if (!authorization) throw new Error('Authorization header is missing')
 
-      return { success: true, token }
+      const [type, tokens] = authorization.split(' ')
+      if (type !== 'Bearer' || !tokens) throw new Error('Invalid token format')
+
+      return {
+        success: true,
+        accessToken: JSON.parse(tokens).accessToken,
+        refreshToken: JSON.parse(tokens).refreshToken
+      }
     } catch (error) {
       console.error('Error in creating token:', error)
       return { success: false, error }
     }
   }
+}
 
-  private async _saveToken({ _id, refreshToken }: ISaveToken) {
-    try {
-      const token = await Token.findByIdAndUpdate(
-        { userToken: _id },
-        { $set: refreshToken },
-        { upsert: true }
-      )
+const _createToken = ({ payload, sub, expiresIn, secret }: ICreateToken) => {
+  try {
+    const token = sign(payload, secret, {
+      subject: sub,
+      expiresIn
+    })
 
-      if (!token) throw new Error('Error cant save token')
-    } catch (error) {
-      console.error('Error in save user token:', error)
-      return { success: false, error }
-    }
+    return { success: true, token }
+  } catch (error) {
+    console.error('Error in creating token:', error)
+    return { success: false, error }
+  }
+}
+
+const _saveToken = async ({ _id, refreshToken }: ISaveToken) => {
+  try {
+    const token = await Token.findByIdAndUpdate(
+      { userToken: _id },
+      { $set: refreshToken },
+      { upsert: true, new: true }
+    )
+
+    if (!token) throw new Error('Error saving token!')
+  } catch (error) {
+    console.error('Error in save user token:', error)
+    return { success: false, error }
+  }
+}
+
+const _searchTokenSecretKey = ({
+  secret
+}: {
+  secret: 'accessToken' | 'refreshToken' | 'emailToken'
+}) => {
+  const tokens = {
+    accessToken: ACCESS_TOKEN_SECRET,
+    refreshToken: REFRESH_TOKEN_SECRET,
+    emailToken: EMAIL_TOKEN_SECRET
   }
 
-  private _searchTokenSecretKey({ secret }: { secret: string }) {
-    switch (secret) {
-      case 'accessToken':
-        return ACCESS_TOKEN_SECRET
-      case 'refreshToken':
-        return REFRESH_TOKEN_SECRET
-      case 'emailToken':
-        return EMAIL_TOKEN_SECRET
-      default:
-        return ''
-    }
-  }
+  return tokens[secret]
 }

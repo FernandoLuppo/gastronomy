@@ -1,78 +1,37 @@
-import { NextFunction, Request, Response, Router } from 'express'
-import { UserController } from '../controllers'
-import { EncryptPassword, TokenService, UserService } from '../services'
-import { TokenAuthenticate } from '../middlewares'
+import { Router } from 'express'
+import { userController } from '../controllers/UserController'
+import { routesAuthentication } from '../middlewares/authentications/routesAuth/index.ts'
+import { tokenAuthentication } from '../middlewares/authentications/tokenAuth/index.ts'
 
 const userRouter = Router()
 
-userRouter.post(
-  '/login',
-  async (req: Request, res: Response, next: NextFunction) => {
-    new TokenAuthenticate(req, res, next)
-
-    const encryptPassword = new EncryptPassword(req.body.password)
-    const tokenService = new TokenService()
-
-    const userService = new UserService(req)
-    const userController = new UserController(res, userService)
-
-    userController.login({ encryptPassword, tokenService })
-  }
-)
+userRouter.post('/login', routesAuthentication.login, userController.login)
 
 userRouter.post(
   '/register',
-  async (req: Request, res: Response, next: NextFunction) => {
-    new TokenAuthenticate(req, res, next)
-
-    const encryptPassword = new EncryptPassword(req.body.password)
-    const userService = new UserService(req)
-    const userController = new UserController(res, userService)
-
-    userController.register({ encryptPassword })
-  }
+  routesAuthentication.register,
+  userController.register
 )
 
-userRouter.get('/logout', (req: Request, res: Response) => {
-  res.clearCookie('accessToken').clearCookie('refreshToken')
-  res.status(204).send()
-})
+userRouter.get('/logout', userController.logout)
 
 userRouter.get(
   '/personal-infos',
-  async (req: Request, res: Response, next: NextFunction) => {
-    new TokenAuthenticate(req, res, next)
-
-    const userService = new UserService(req)
-    const userController = new UserController(res, userService)
-
-    userController.userPersonalInfos()
-  }
+  tokenAuthentication.privateRoutes,
+  userController.userPersonalInfos
 )
 
 userRouter.patch(
   '/update-infos',
-  async (req: Request, res: Response, next: NextFunction) => {
-    new TokenAuthenticate(req, res, next)
-
-    const encryptPassword = new EncryptPassword(req.body.password)
-    const userService = new UserService(req)
-    const userController = new UserController(res, userService)
-
-    userController.updatePersonalInfos({ encryptPassword })
-  }
+  tokenAuthentication.privateRoutes,
+  routesAuthentication.updateUserInfos,
+  userController.updatePersonalInfos
 )
 
 userRouter.delete(
   '/delete',
-  async (req: Request, res: Response, next: NextFunction) => {
-    new TokenAuthenticate(req, res, next)
-
-    const userService = new UserService(req)
-    const userController = new UserController(res, userService)
-
-    userController.deleteAccount()
-  }
+  tokenAuthentication.privateRoutes,
+  userController.deleteAccount
 )
 
 export { userRouter }
