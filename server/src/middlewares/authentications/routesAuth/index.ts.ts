@@ -4,7 +4,7 @@ import {
   registerSchema,
   updateUserInfosSchema
 } from '../../schemas'
-import { STATUS_CODE } from '../../../settings/http'
+import { STATUS_CODE } from '../../../constants/HTTP'
 
 export const routesAuthentication = {
   register: async (req: Request, res: Response, next: NextFunction) => {

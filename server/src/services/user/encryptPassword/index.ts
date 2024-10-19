@@ -1,5 +1,5 @@
-import { Request } from 'express'
-import bcryptjs from 'bcrypt'
+import bcryptjs from 'bcryptjs'
+import { handleErrors } from '../../../utils'
 
 export const encrypt = ({ password }: { password: string }) => {
   try {
@@ -7,9 +7,12 @@ export const encrypt = ({ password }: { password: string }) => {
     const encryptedUserPassword = bcryptjs.hashSync(password, encryption)
 
     return { encryptedUserPassword, success: true }
-  } catch (error) {
-    console.log(error)
-    return { error, success: false }
+  } catch (err) {
+    const { error, success } = handleErrors({
+      err,
+      errorMessage: 'Error in encrypt function'
+    })
+    return { error, success }
   }
 }
 
@@ -26,8 +29,11 @@ export const decrypt = async ({
     if (!matchPasswords) throw new Error("Password don't match!")
 
     return { success: true }
-  } catch (error) {
-    console.log(error)
-    return { error, success: false }
+  } catch (err) {
+    const { error, success } = handleErrors({
+      err,
+      errorMessage: 'Error in decrypt function'
+    })
+    return { error, success }
   }
 }

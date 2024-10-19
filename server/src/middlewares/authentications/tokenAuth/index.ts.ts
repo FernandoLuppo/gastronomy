@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 import { tokenService } from '../../../services/token'
 import { IPayload } from '../../../types'
-import { STATUS_CODE } from '../../../settings/http'
+import { STATUS_CODE } from '../../../constants/HTTP'
+import { cookiesCalc } from '../../../utils'
 
-const REFRESH_TOKEN_EXPIRES_IN = 2.592e8 // 3 Days
-const ACCESS_TOKEN_EXPIRES_IN = 3.6e6 // 60 Minutes
+const { ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE, HTTP_ONLY } = process.env
+const httpOnly = HTTP_ONLY === 'true' ? true : false
 
 export const tokenAuthentication = {
   privateRoutes: async (req: Request, res: Response, next: NextFunction) => {
@@ -37,13 +38,19 @@ export const tokenAuthentication = {
 
       res
         .cookie('accessToken', newTokens.tokens?.accessToken, {
-          maxAge: ACCESS_TOKEN_EXPIRES_IN,
-          httpOnly: false,
+          maxAge: cookiesCalc({
+            cookieMaxAge: ACCESS_TOKEN_MAX_AGE,
+            dataType: 'minutes'
+          }),
+          httpOnly,
           sameSite: 'lax'
         })
         .cookie('refreshToken', newTokens.tokens?.refreshToken, {
-          maxAge: REFRESH_TOKEN_EXPIRES_IN,
-          httpOnly: false,
+          maxAge: cookiesCalc({
+            cookieMaxAge: REFRESH_TOKEN_MAX_AGE,
+            dataType: 'days'
+          }),
+          httpOnly,
           sameSite: 'lax'
         })
 

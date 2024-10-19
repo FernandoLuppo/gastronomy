@@ -8,12 +8,16 @@ import {
   IToken,
   ITokenValidate
 } from '../../types'
+import { handleErrors } from '../../utils'
 
-const REFRESH_TOKEN_EXPIRES_IN = 3 // Days
-const TOKEN_EXPIRES_IN = 60 // Minutes
-const EMAIL_TOKEN_EXPIRES_IN = 5 // Minutes
-const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, EMAIL_TOKEN_SECRET } =
-  process.env
+const {
+  ACCESS_TOKEN_SECRET,
+  REFRESH_TOKEN_SECRET,
+  EMAIL_TOKEN_SECRET,
+  REFRESH_TOKEN_MAX_AGE,
+  ACCESS_TOKEN_MAX_AGE,
+  EMAIL_TOKEN_MAX_AGE
+} = process.env
 
 export const tokenService = {
   createUserToken: async ({ _id, content }: IPayload) => {
@@ -27,7 +31,7 @@ export const tokenService = {
           role: 'accessToken'
         },
         sub: _id,
-        expiresIn: `${TOKEN_EXPIRES_IN}m`,
+        expiresIn: `${ACCESS_TOKEN_MAX_AGE}m`,
         secret: ACCESS_TOKEN_SECRET
       })
       if (!accessToken.success)
@@ -39,14 +43,14 @@ export const tokenService = {
           role: 'refreshToken'
         },
         sub: _id,
-        expiresIn: `${REFRESH_TOKEN_EXPIRES_IN}d`,
+        expiresIn: `${REFRESH_TOKEN_MAX_AGE}d`,
         secret: REFRESH_TOKEN_SECRET
       })
       if (!refreshToken.success)
         throw new Error('Error in refresh token creation.')
 
       const refreshTokenExpiresDate = dayjs()
-        .add(REFRESH_TOKEN_EXPIRES_IN, 'day')
+        .add(Number(REFRESH_TOKEN_MAX_AGE), 'day')
         .toDate()
 
       const newRefreshToken = {
@@ -64,9 +68,12 @@ export const tokenService = {
           refreshToken: refreshToken.token
         }
       }
-    } catch (error) {
-      console.error('Error in creating user token:', error)
-      return { success: false, error }
+    } catch (err) {
+      const { error, success } = handleErrors({
+        err,
+        errorMessage: 'Error in creating user token'
+      })
+      return { error, success }
     }
   },
 
@@ -80,15 +87,18 @@ export const tokenService = {
           role: 'emailToken'
         },
         sub: _id,
-        expiresIn: `${EMAIL_TOKEN_EXPIRES_IN}m`,
+        expiresIn: `${EMAIL_TOKEN_MAX_AGE}m`,
         secret: EMAIL_TOKEN_SECRET
       })
       if (!emailToken.success) throw new Error('Error in email token creation.')
 
       return { success: true, emailToken: emailToken.token }
-    } catch (error) {
-      console.error('Error in creating email token:', error)
-      return { success: false, error }
+    } catch (err) {
+      const { error, success } = handleErrors({
+        err,
+        errorMessage: 'Error in creating email token'
+      })
+      return { error, success }
     }
   },
 
@@ -107,9 +117,12 @@ export const tokenService = {
       }
 
       return { success: true, decodedToken }
-    } catch (error) {
-      console.error('Error in validation token:', error)
-      return { success: false, error }
+    } catch (err) {
+      const { error, success } = handleErrors({
+        err,
+        errorMessage: 'Error in validation token'
+      })
+      return { error, success }
     }
   },
 
@@ -125,9 +138,12 @@ export const tokenService = {
         accessToken: JSON.parse(tokens).accessToken,
         refreshToken: JSON.parse(tokens).refreshToken
       }
-    } catch (error) {
-      console.error('Error in creating token:', error)
-      return { success: false, error }
+    } catch (err) {
+      const { error, success } = handleErrors({
+        err,
+        errorMessage: 'Error in creating token'
+      })
+      return { error, success }
     }
   }
 }
@@ -140,24 +156,30 @@ const _createToken = ({ payload, sub, expiresIn, secret }: ICreateToken) => {
     })
 
     return { success: true, token }
-  } catch (error) {
-    console.error('Error in creating token:', error)
-    return { success: false, error }
+  } catch (err) {
+    const { error, success } = handleErrors({
+      err,
+      errorMessage: 'Error in creating token'
+    })
+    return { error, success }
   }
 }
 
 const _saveToken = async ({ _id, refreshToken }: ISaveToken) => {
   try {
-    const token = await Token.findByIdAndUpdate(
+    const token = await Token.findOneAndUpdate(
       { userToken: _id },
       { $set: refreshToken },
       { upsert: true, new: true }
     )
 
     if (!token) throw new Error('Error saving token!')
-  } catch (error) {
-    console.error('Error in save user token:', error)
-    return { success: false, error }
+  } catch (err) {
+    const { error, success } = handleErrors({
+      err,
+      errorMessage: 'Error in save user token'
+    })
+    return { error, success }
   }
 }
 

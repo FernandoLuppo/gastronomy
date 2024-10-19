@@ -4,6 +4,10 @@ import { routesAuthentication } from '../middlewares/authentications/routesAuth/
 import { tokenAuthentication } from '../middlewares/authentications/tokenAuth/index.ts'
 
 const userRouter = Router()
+userRouter.get('/test', (req, res) => {
+  console.log('test')
+  res.send({ message: '2' })
+})
 
 userRouter.post('/login', routesAuthentication.login, userController.login)
 
