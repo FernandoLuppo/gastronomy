@@ -1,8 +1,21 @@
 import { Request, Response } from 'express'
 import { userService } from '../../services/user'
-import { STATUS_CODE } from '../../settings/http'
+import { STATUS_CODE } from '../../constants/HTTP'
+import { IToken } from '../../types'
+import { cookiesCalc } from '../../utils'
 
-const { ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE } = process.env
+const { ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE, HTTP_ONLY } = process.env
+const httpOnly = HTTP_ONLY === 'true' ? true : false
+
+declare global {
+  namespace Express {
+    interface Request {
+      user: {
+        token: IToken
+      }
+    }
+  }
+}
 
 export const userController = {
   login: async (req: Request, res: Response) => {
@@ -12,18 +25,28 @@ export const userController = {
       email,
       password
     })
+
     if (!success)
-      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(error)
+      return res
+        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+        .send({ success: false, error })
+
     return res
       .status(STATUS_CODE.SUCCESS)
       .cookie('accessToken', userTokens?.tokens?.accessToken, {
-        maxAge: Number(ACCESS_TOKEN_MAX_AGE),
-        httpOnly: false,
+        maxAge: cookiesCalc({
+          cookieMaxAge: ACCESS_TOKEN_MAX_AGE,
+          dataType: 'minutes'
+        }),
+        httpOnly,
         sameSite: 'lax'
       })
       .cookie('refreshToken', userTokens?.tokens?.refreshToken, {
-        maxAge: Number(REFRESH_TOKEN_MAX_AGE),
-        httpOnly: false,
+        maxAge: cookiesCalc({
+          cookieMaxAge: REFRESH_TOKEN_MAX_AGE,
+          dataType: 'days'
+        }),
+        httpOnly,
         sameSite: 'lax'
       })
       .send({ success })

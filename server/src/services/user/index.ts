@@ -1,6 +1,7 @@
 import User from '../../models/user/User'
 import { decrypt, encrypt } from './encryptPassword'
 import { tokenService } from '../token'
+import { handleErrors } from '../../utils'
 
 export const userService = {
   userPersonalInfos: async ({ _id }: { _id: string }) => {
@@ -9,9 +10,12 @@ export const userService = {
       if (!user) throw new Error('User not found!')
 
       return { user, success: true }
-    } catch (error) {
-      console.error('Error when trying to get user personal infos:', error)
-      return { error, success: false }
+    } catch (err) {
+      const { error, success } = handleErrors({
+        err,
+        errorMessage: 'Error when trying to get user personal infos:'
+      })
+      return { error, success }
     }
   },
 
@@ -30,15 +34,18 @@ export const userService = {
       if (!user) throw new Error('User not found!')
 
       return { user, success: true }
-    } catch (error) {
-      console.error('Error in update user infos:', error)
-      return { error, success: false }
+    } catch (err) {
+      const { error, success } = handleErrors({
+        err,
+        errorMessage: 'Error in update user infos:'
+      })
+      return { error, success }
     }
   },
 
   login: async ({ email, password }: { email: string; password: string }) => {
     try {
-      const user = await User.findOne({ email })
+      const user = await User.findOne({ email }).select('name email password')
       if (!user) throw new Error('User not found!')
 
       const { success } = await decrypt({
@@ -53,12 +60,17 @@ export const userService = {
         content: user
       })
 
+      delete user.password
+
       if (!userTokens.success) throw new Error(userTokens.error as string)
 
       return { userTokens, success: true }
-    } catch (error) {
-      console.error('Error in login:', error)
-      return { error, success: false }
+    } catch (err) {
+      const { error, success } = handleErrors({
+        err,
+        errorMessage: 'Error in Login'
+      })
+      return { error, success }
     }
   },
 
@@ -76,9 +88,12 @@ export const userService = {
       if (!user) throw new Error('User not found!')
 
       return { success: true }
-    } catch (error) {
-      console.error('Error in registering user:', error)
-      return { error, success: false }
+    } catch (err) {
+      const { error, success } = handleErrors({
+        err,
+        errorMessage: 'Error in registering user:'
+      })
+      return { error, success }
     }
   },
 
@@ -87,9 +102,12 @@ export const userService = {
       await User.deleteOne({ _id })
 
       return { success: true }
-    } catch (error) {
-      console.error('Error in deleting user account:', error)
-      return { error, success: false }
+    } catch (err) {
+      const { error, success } = handleErrors({
+        err,
+        errorMessage: 'Error in deleting user account:'
+      })
+      return { error, success }
     }
   }
 }

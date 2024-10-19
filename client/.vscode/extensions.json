@@ -3,7 +3,6 @@
     "editorconfig.editorconfig",
     "dbaeumer.vscode-eslint",
     "firsttris.vscode-jest-runner",
-    "esbenp.prettier-vscode",
-    "styled-components.vscode-styled-components"
+    "esbenp.prettier-vscode"
   ]
 }
