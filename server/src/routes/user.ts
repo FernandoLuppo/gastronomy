@@ -1,19 +1,41 @@
-import { Request, Response, Router } from 'express'
-import { User } from '../services'
-import { UserController } from '../controllers'
+import { Router } from 'express'
+import { userController } from '../controllers/UserController'
+import { routesAuthentication } from '../middlewares/authentications/routesAuth/index.ts'
+import { tokenAuthentication } from '../middlewares/authentications/tokenAuth/index.ts'
 
 const userRouter = Router()
+userRouter.get('/test', (req, res) => {
+  console.log('test')
+  res.send({ message: '2' })
+})
 
-userRouter.get('/personal-infos', async (req: Request, res: Response) => {})
+userRouter.post('/login', routesAuthentication.login, userController.login)
 
-userRouter.patch('/update-infos', async (req: Request, res: Response) => {})
+userRouter.post(
+  '/register',
+  routesAuthentication.register,
+  userController.register
+)
 
-userRouter.post('/login', async (req: Request, res: Response) => {})
+userRouter.get('/logout', userController.logout)
 
-userRouter.post('/register', async (req: Request, res: Response) => {})
+userRouter.get(
+  '/personal-infos',
+  tokenAuthentication.privateRoutes,
+  userController.userPersonalInfos
+)
 
-userRouter.get('/logout', async (req: Request, res: Response) => {})
+userRouter.patch(
+  '/update-infos',
+  tokenAuthentication.privateRoutes,
+  routesAuthentication.updateUserInfos,
+  userController.updatePersonalInfos
+)
 
-userRouter.delete('/delete', async (req: Request, res: Response) => {})
+userRouter.delete(
+  '/delete',
+  tokenAuthentication.privateRoutes,
+  userController.deleteAccount
+)
 
 export { userRouter }

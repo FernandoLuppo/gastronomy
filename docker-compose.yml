@@ -6,13 +6,16 @@ networks:
 
 volumes:
   mongo-vol: {}
+  mongodb-config-vol: {}
   mongo-vol-test: {}
+  mongodb-config-test-vol: {}
 
 services:
   nextjs:
     build:
       context: ./client
       dockerfile: Dockerfile
+    command: yarn dev
     ports:
       - "3001:3001"
     depends_on:
@@ -21,6 +24,10 @@ services:
       - mongodb-test
     networks:
       - gastronomy-network
+    volumes:
+      - ./client:/app
+    environment:
+      - NODE_ENV=development
 
   node-api:
     build:
@@ -28,16 +35,16 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      MONGO_URI: ${MONGO_URI}
+    env_file:
+      - .env
     depends_on:
       - mongodb
       - mongodb-test
     networks:
       - gastronomy-network
-    volumes:
-      - ./server/src:/app/src
     command: yarn dev
+    volumes:
+      - ./server:/app
 
   mongodb:
     image: mongo
@@ -49,6 +56,7 @@ services:
       - "27018:27017"
     volumes:
       - mongo-vol:/data/db
+      - mongodb-config-vol:/data/configdb
     networks:
       - gastronomy-network
 
@@ -57,10 +65,11 @@ services:
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME_TEST}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_USERNAME_TEST}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD_TEST}
     ports:
       - "27019:27017"
     volumes:
       - mongo-vol-test:/data/db
+      - mongodb-config-test-vol:/data/configdb
     networks:
       - gastronomy-network
