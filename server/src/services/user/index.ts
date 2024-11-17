@@ -3,6 +3,12 @@ import { decrypt, encrypt } from './encryptPassword'
 import { tokenService } from '../token'
 import { handleErrors } from '../../utils'
 
+interface ILogin {
+  email: string
+  password?: string
+  socialLogin?: boolean
+}
+
 export const userService = {
   userPersonalInfos: async ({ _id }: { _id: string }) => {
     try {
@@ -43,24 +49,24 @@ export const userService = {
     }
   },
 
-  login: async ({ email, password }: { email: string; password: string }) => {
+  login: async ({ email, password, socialLogin }: ILogin) => {
     try {
       const user = await User.findOne({ email }).select('name email password')
       if (!user) throw new Error('User not found!')
 
-      const { success } = await decrypt({
-        password,
-        comparePassword: user.password as string
-      })
-      if (!success) throw new Error('Email or password incorrect!')
+      if (!socialLogin) {
+        const { success } = await decrypt({
+          password: password as string,
+          comparePassword: user.password as string
+        })
+        if (!success) throw new Error('Email or password incorrect!')
 
-      delete user.password
+        delete user.password
+      }
       const userTokens = await tokenService.createUserToken({
         _id: user._id.toString(),
         content: user
       })
-
-      delete user.password
 
       if (!userTokens.success) throw new Error(userTokens.error as string)
 
@@ -74,20 +80,27 @@ export const userService = {
     }
   },
 
-  register: async ({ data }: { data: any }) => {
+  register: async ({
+    data
+  }: {
+    data: { name: string; email: string; password: string }
+  }) => {
     try {
       const { success, encryptedUserPassword } = encrypt({
         password: data.password
       })
-
-      if (!success) throw new Error('Error in encrypting password!')
+      if (!success || !encryptedUserPassword)
+        throw new Error('Error in encrypting password!')
 
       data.password = encryptedUserPassword
       const user = await User.create(data)
 
       if (!user) throw new Error('User not found!')
-
-      return { success: true }
+      const userData = {
+        email: user.email,
+        password: user.password
+      }
+      return { success: true, data: userData }
     } catch (err) {
       const { error, success } = handleErrors({
         err,

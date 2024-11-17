@@ -1,31 +1,23 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { handleError, registerSchema } from "@/shared/utils";
-import { useForm } from "react-hook-form";
+import { registerSchema } from "@/shared/utils";
 import { IRegisterFormValues, ISubmitData } from "@/shared/types";
-import { useApi } from "@/shared/hooks";
+import { useApi, useAuthForm } from "@/shared/hooks";
 
 interface IRegisterBody extends ISubmitData {
   body: IRegisterFormValues;
 }
 
-export const handleForm = () => {
-  const { register, handleSubmit, formState, reset } = useForm({
-    mode: "all",
-    resolver: yupResolver(registerSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: ""
-    }
-  });
+const handleForm = () => {
+  const defaultValues = {
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  };
 
-  const { errors, isSubmitting } = formState;
-
-  return { register, handleSubmit, errors, isSubmitting, reset };
+  return useAuthForm({ defaultValues, authSchema: registerSchema });
 };
 
-export const submitData = async ({ reset, route, body }: IRegisterBody) => {
+const submitData = async ({ reset, route, body }: IRegisterBody) => {
   try {
     const data = await useApi({
       url: "/user/register",
@@ -41,3 +33,5 @@ export const submitData = async ({ reset, route, body }: IRegisterBody) => {
     reset();
   }
 };
+
+export { handleForm, submitData };

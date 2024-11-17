@@ -1,17 +1,11 @@
-"use client";
-
-import { togglePasswordVisibility } from "@/shared/lib/features/showPassword-slice";
-import { RootState } from "@/shared/lib/store";
 import clsx from "clsx";
-import { useState } from "react";
 import { FieldError } from "react-hook-form";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
+import { InputEye } from "./components/inputEye";
 
 interface IInput extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   id: string;
-  errors?: FieldError;
+  errors: any;
   register: any;
   passwordType?: "password" | "conformPassword";
 }
@@ -24,9 +18,6 @@ export const Input = ({
   passwordType,
   ...other
 }: IInput) => {
-  const dispatch = useDispatch();
-  const { show } = useSelector((state: RootState) => state.passwordReducer);
-
   return (
     <div>
       <label htmlFor={id} className="text-3xl">
@@ -43,57 +34,7 @@ export const Input = ({
             "pr-12": other.type === "password"
           })}
         />
-        {passwordType && (
-          <>
-            {passwordType === "password" && (
-              <>
-                {show.password ? (
-                  <FaEye
-                    color="#252525"
-                    size={23}
-                    onClick={() =>
-                      dispatch(togglePasswordVisibility("password"))
-                    }
-                    className="absolute right-3 top-3 cursor-pointer"
-                  />
-                ) : (
-                  <FaEyeSlash
-                    color="#252525"
-                    size={23}
-                    onClick={() =>
-                      dispatch(togglePasswordVisibility("password"))
-                    }
-                    className="absolute right-3 top-3 cursor-pointer"
-                  />
-                )}
-              </>
-            )}
-
-            {passwordType === "conformPassword" && (
-              <>
-                {show.confirmPassword ? (
-                  <FaEye
-                    color="#252525"
-                    size={23}
-                    onClick={() =>
-                      dispatch(togglePasswordVisibility("confirmPassword"))
-                    }
-                    className="absolute right-3 top-3 cursor-pointer"
-                  />
-                ) : (
-                  <FaEyeSlash
-                    color="#252525"
-                    size={23}
-                    onClick={() =>
-                      dispatch(togglePasswordVisibility("confirmPassword"))
-                    }
-                    className="absolute right-3 top-3 cursor-pointer"
-                  />
-                )}
-              </>
-            )}
-          </>
-        )}
+        <InputEye passwordType={passwordType} />
       </div>
       {errors && (
         <p className="text-red-500 w-full mt-1 text-xs md:text-base">

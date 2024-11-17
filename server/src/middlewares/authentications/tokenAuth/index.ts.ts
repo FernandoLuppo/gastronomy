@@ -32,7 +32,7 @@ export const tokenAuthentication = {
         throw new Error(refreshTokenValidate.error as string)
 
       const newTokens = await tokenService.createUserToken(
-        refreshTokenValidate.decodedToken?.payload as IPayload
+        refreshTokenValidate.decodedToken?.content as IPayload
       )
       if (!newTokens.success) throw new Error(newTokens.error as string)
 
@@ -63,13 +63,13 @@ export const tokenAuthentication = {
     }
   },
 
-  emailPrivateRoutes: async (
+  recoverPasswordPrivateRoutes: async (
     req: Request,
     res: Response,
     next: NextFunction
   ) => {
     try {
-      const { emailToken } = JSON.parse(req.headers.authorization as string)
+      const emailToken = req.headers.authorization
       if (!emailToken) throw new Error('Token is missing!')
 
       const emailTokenValidated = tokenService.validateToken({

@@ -3,7 +3,7 @@ export const handleErrors = ({
   errorMessage
 }: {
   err: unknown
-  errorMessage: string
+  errorMessage?: string
 }): { error: string; success: boolean } => {
   console.error(`${errorMessage}: ${err}`)
 

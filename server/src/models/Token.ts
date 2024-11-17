@@ -1,18 +1,23 @@
 import { Schema, model } from 'mongoose'
 
-export const Token = new Schema({
-  refreshToken: {
-    type: String,
-    required: true
+export const Token = new Schema(
+  {
+    refreshToken: {
+      type: String,
+      required: true
+    },
+    expireDat: {
+      type: Date,
+      required: true
+    },
+    userToken: {
+      type: Schema.Types.ObjectId,
+      ref: 'users'
+    }
   },
-  expireDat: {
-    type: Date,
-    required: true
-  },
-  userToken: {
-    type: Schema.Types.ObjectId,
-    ref: 'users'
+  {
+    timestamps: true
   }
-})
+)
 
 export default model('token', Token)

@@ -2,16 +2,19 @@ import { Request } from 'express'
 
 export interface IPayload {
   _id: string
-  content: any
+  content?: any
 }
 
 export interface IToken {
   sub: string
-  payload: IPayload
+  content: any
 }
 
 export interface ICreateToken {
-  payload: any
+  payload: {
+    content: any
+    role?: string
+  }
   sub: string
   expiresIn: string
   secret: string

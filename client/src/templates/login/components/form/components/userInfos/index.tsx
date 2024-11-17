@@ -39,14 +39,7 @@ export const UserInfos = () => {
         errors={errors.password}
       />
       <div className="flex-center-between mb-5">
-        <div className="flex gap-1 ">
-          <input type="checkbox" id="remember-me" className="cursor-pointer" />
-          <label htmlFor="remember-me" className="cursor-pointer">
-            Remember-me
-          </label>
-        </div>
-
-        <Link href="" className="underline ">
+        <Link href="/recover-password/check-email" className="underline ">
           Forgot Password?
         </Link>
       </div>

@@ -39,6 +39,10 @@ const config: Config = {
       },
       fontFamily: {
         "la-belle-aurore": ["var(--font-la-belle-aurore)", "cursive"]
+      },
+      gradientColorStops: {
+        primary: "#7B1D20",
+        "default-white": "#F2F2F2"
       }
     }
   },
