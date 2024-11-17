@@ -25,16 +25,16 @@ const baseUserSchema = yup.object().shape({
     )
 });
 
-export const registerSchema = baseUserSchema.shape({
+const registerSchema = baseUserSchema.shape({
   confirmPassword: yup
     .string()
     .required("Confirm Password field is required.")
     .oneOf([yup.ref("password")], "Passwords must match.")
 });
 
-export const loginSchema = baseUserSchema.pick(["email", "password"]);
+const loginSchema = baseUserSchema.pick(["email", "password"]);
 
-export const updateUserInfosSchema = baseUserSchema.shape({
+const updateUserInfosSchema = baseUserSchema.shape({
   confirmPassword: yup
     .string()
     .required("Confirm Password field is required.")
@@ -49,3 +49,29 @@ export const updateUserInfosSchema = baseUserSchema.shape({
       "Must contain 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character."
     )
 });
+
+const checkEmailSchema = baseUserSchema.pick(["email"]);
+
+const checkSecurityCodeSchema = yup.object().shape({
+  securityCode: yup
+    .string()
+    .required("Security code field is required.")
+    .max(5, "Field min length character is 5")
+    .max(5, "Field max length character is 5")
+});
+
+const newPasswordSchema = baseUserSchema.pick(["password"]).shape({
+  confirmPassword: yup
+    .string()
+    .required("Confirm Password field is required.")
+    .oneOf([yup.ref("password")], "Passwords must match.")
+});
+
+export {
+  registerSchema,
+  loginSchema,
+  updateUserInfosSchema,
+  checkEmailSchema,
+  checkSecurityCodeSchema,
+  newPasswordSchema
+};

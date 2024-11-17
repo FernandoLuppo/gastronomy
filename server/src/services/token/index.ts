@@ -26,10 +26,7 @@ export const tokenService = {
         throw new Error('Token secret is missing!')
 
       const accessToken = _createToken({
-        payload: {
-          content,
-          role: 'accessToken'
-        },
+        payload: { content, role: 'accessToken' },
         sub: _id,
         expiresIn: `${ACCESS_TOKEN_MAX_AGE}m`,
         secret: ACCESS_TOKEN_SECRET
@@ -38,10 +35,7 @@ export const tokenService = {
         throw new Error('Error in access token creation.')
 
       const refreshToken = _createToken({
-        payload: {
-          content,
-          role: 'refreshToken'
-        },
+        payload: { content, role: 'refreshToken' },
         sub: _id,
         expiresIn: `${REFRESH_TOKEN_MAX_AGE}d`,
         secret: REFRESH_TOKEN_SECRET
@@ -77,15 +71,12 @@ export const tokenService = {
     }
   },
 
-  createEmailToken: ({ _id, content }: IPayload) => {
+  createEmailToken: ({ _id, content = {} }: IPayload) => {
     try {
       if (!EMAIL_TOKEN_SECRET) throw new Error('Token secret is missing!')
 
       const emailToken = _createToken({
-        payload: {
-          content,
-          role: 'emailToken'
-        },
+        payload: { content, role: 'emailToken' },
         sub: _id,
         expiresIn: `${EMAIL_TOKEN_MAX_AGE}m`,
         secret: EMAIL_TOKEN_SECRET
@@ -106,13 +97,16 @@ export const tokenService = {
     try {
       const secretKey = _searchTokenSecretKey({ secret })
       if (!secretKey) throw new Error('Token secret key is undefined!')
+      const tokenWithoutBearer = token.replace('Bearer ', '')
 
-      const decodedToken = verify(token, secretKey) as IToken
-
-      req.user = {
+      const decodedToken = verify(tokenWithoutBearer, secretKey) as {
+        sub: string
+        content: any
+      }
+      req.authenticatedUser = {
         token: {
           sub: decodedToken.sub,
-          payload: decodedToken.payload
+          content: decodedToken.content
         }
       }
 
@@ -149,6 +143,8 @@ export const tokenService = {
 }
 
 const _createToken = ({ payload, sub, expiresIn, secret }: ICreateToken) => {
+  console.log({ payload, sub, expiresIn, secret })
+
   try {
     const token = sign(payload, secret, {
       subject: sub,

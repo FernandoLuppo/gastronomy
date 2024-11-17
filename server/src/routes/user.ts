@@ -4,10 +4,6 @@ import { routesAuthentication } from '../middlewares/authentications/routesAuth/
 import { tokenAuthentication } from '../middlewares/authentications/tokenAuth/index.ts'
 
 const userRouter = Router()
-userRouter.get('/test', (req, res) => {
-  console.log('test')
-  res.send({ message: '2' })
-})
 
 userRouter.post('/login', routesAuthentication.login, userController.login)
 
@@ -36,6 +32,26 @@ userRouter.delete(
   '/delete',
   tokenAuthentication.privateRoutes,
   userController.deleteAccount
+)
+
+userRouter.post(
+  '/recover-password/check-email',
+  routesAuthentication.recoverPasswordCheckEmail,
+  userController.checkEmail
+)
+
+userRouter.post(
+  '/recover-password/check-security-code',
+  tokenAuthentication.recoverPasswordPrivateRoutes,
+  routesAuthentication.recoverPasswordCheckCode,
+  userController.checkCode
+)
+
+userRouter.patch(
+  '/recover-password/new-password',
+  tokenAuthentication.recoverPasswordPrivateRoutes,
+  routesAuthentication.newPassword,
+  userController.newPassword
 )
 
 export { userRouter }

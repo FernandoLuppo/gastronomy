@@ -7,7 +7,7 @@ export const Header = () => {
   const user = false;
 
   return (
-    <header className="flex justify-center lg:justify-between items-center p-12 bg-primary lg:bg-none lg:fixed lg:top-0 lg:z-10">
+    <header className="flex justify-center lg:justify-between items-center p-12 lg:bg-none lg:fixed lg:top-0 lg:z-10 bg-primary">
       <motion.div
         className="flex gap-2 items-end"
         variants={fadeIn}
