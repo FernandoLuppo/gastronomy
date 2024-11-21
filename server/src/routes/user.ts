@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { userController } from '../controllers/UserController'
-import { routesAuthentication } from '../middlewares/authentications/routesAuth/index.ts'
-import { tokenAuthentication } from '../middlewares/authentications/tokenAuth/index.ts'
+import { routesAuthentication } from '../middlewares/authentications/routesAuth'
+import { tokenAuthentication } from '../middlewares/authentications/tokenAuth'
 
 const userRouter = Router()
 
@@ -32,26 +32,6 @@ userRouter.delete(
   '/delete',
   tokenAuthentication.privateRoutes,
   userController.deleteAccount
-)
-
-userRouter.post(
-  '/recover-password/check-email',
-  routesAuthentication.recoverPasswordCheckEmail,
-  userController.checkEmail
-)
-
-userRouter.post(
-  '/recover-password/check-security-code',
-  tokenAuthentication.recoverPasswordPrivateRoutes,
-  routesAuthentication.recoverPasswordCheckCode,
-  userController.checkCode
-)
-
-userRouter.patch(
-  '/recover-password/new-password',
-  tokenAuthentication.recoverPasswordPrivateRoutes,
-  routesAuthentication.newPassword,
-  userController.newPassword
 )
 
 export { userRouter }

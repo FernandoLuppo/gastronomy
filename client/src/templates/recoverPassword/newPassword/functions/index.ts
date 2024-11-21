@@ -25,7 +25,7 @@ const submitData = async ({
     if (!newPasswordToken.success) throw new Error(newPasswordToken.error);
 
     const data = await useApi({
-      url: "/user/recover-password/new-password",
+      url: "/recover-password/new-password",
       method: "PATCH",
       body,
       token: newPasswordToken.token
@@ -33,6 +33,7 @@ const submitData = async ({
 
     if (!data.success) throw new Error(data.error);
 
+    useToken.clear({ tokenName: "emailToken" });
     return route.push("/login");
   } catch (error) {
     console.log(error);

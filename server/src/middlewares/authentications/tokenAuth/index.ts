@@ -56,7 +56,7 @@ export const tokenAuthentication = {
 
       return next()
     } catch (error) {
-      console.log('Token not authorized: ', error)
+      console.log(error)
       return res
         .status(STATUS_CODE.UNAUTHORIZED)
         .send({ success: false, error: 'Unauthorized!' })
@@ -83,7 +83,7 @@ export const tokenAuthentication = {
 
       next()
     } catch (error) {
-      console.log('Token not authorized: ', error)
+      console.log(error)
       return res
         .status(STATUS_CODE.UNAUTHORIZED)
         .send({ success: false, error: 'Unauthorized!' })

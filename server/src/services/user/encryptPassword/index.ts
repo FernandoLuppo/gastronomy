@@ -1,19 +1,10 @@
 import bcryptjs from 'bcryptjs'
-import { handleErrors } from '../../../utils'
 
 export const encrypt = ({ password }: { password: string }) => {
-  try {
-    const encryption = bcryptjs.genSaltSync(10)
-    const encryptedUserPassword = bcryptjs.hashSync(password, encryption)
+  const encryption = bcryptjs.genSaltSync(10)
+  const encryptedUserPassword = bcryptjs.hashSync(password, encryption)
 
-    return { encryptedUserPassword, success: true }
-  } catch (err) {
-    const { error, success } = handleErrors({
-      err,
-      errorMessage: 'Error in encrypt function'
-    })
-    return { error, success }
-  }
+  return { encryptedUserPassword }
 }
 
 export const decrypt = async ({
@@ -23,17 +14,12 @@ export const decrypt = async ({
   password: string
   comparePassword: string
 }) => {
-  try {
-    const matchPasswords = await bcryptjs.compare(password, comparePassword)
+  console.log({ password })
+  console.log({ comparePassword })
+  const matchPasswords = await bcryptjs.compare(password, comparePassword)
+  console.log({ matchPasswords })
 
-    if (!matchPasswords) throw new Error("Password don't match!")
+  if (!matchPasswords) return { error: "Password don't match!", success: false }
 
-    return { success: true }
-  } catch (err) {
-    const { error, success } = handleErrors({
-      err,
-      errorMessage: 'Error in decrypt function'
-    })
-    return { error, success }
-  }
+  return { success: true }
 }

@@ -24,7 +24,7 @@ const submitData = async ({
 }: IRecoverPasswordCheckEmailBody) => {
   try {
     const data = await useApi({
-      url: "/user/recover-password/check-email",
+      url: "/recover-password/check-email",
       method: "POST",
       body
     });
