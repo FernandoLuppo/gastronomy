@@ -1,10 +1,17 @@
-import express, { Router } from 'express'
+import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import { userRouter } from './routes'
-import mongoose from 'mongoose'
-
+import { userRouter, recoverPasswordRouter, socialLoginRouter } from './routes'
 import * as dotenv from 'dotenv'
+import { initDb } from './config/db'
+import {
+  githubSocialLogin,
+  googleSocialLoginConfig
+} from './config/socialLogin'
+import passport from 'passport'
+import GoogleStrategy from 'passport-google-oauth20'
+import session from 'express-session'
+
 dotenv.config()
 
 const app = express()
@@ -19,31 +26,22 @@ app.use(
 
 app.use(cookieParser())
 
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET as string,
+    resave: false,
+    saveUninitialized: true
+  })
+)
+app.use(passport.initialize())
+app.use(passport.session())
+googleSocialLoginConfig()
+githubSocialLogin()
+
 app.use('/user', userRouter)
+app.use('/recover-password', recoverPasswordRouter)
+app.use('/social-login', socialLoginRouter)
 
-const { AMBIENT, MONGO_DEV_URI, MONGO_TEST_URI } = process.env
-
-let mongoURI
-
-switch (AMBIENT) {
-  case 'test':
-    mongoURI = MONGO_TEST_URI
-    break
-  case 'development':
-  default:
-    mongoURI = MONGO_DEV_URI
-    break
-}
-
-if (mongoURI) {
-  mongoose
-    .connect(mongoURI)
-    .then(() => {
-      console.log(`MongoDB connected successfully to ${AMBIENT} database`)
-    })
-    .catch(error => {
-      console.error('MongoDB connection error:', error)
-    })
-}
+initDb()
 
 export { app }

@@ -7,24 +7,16 @@ interface IButton extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
   src?: string;
   alt?: string;
-  socialMedia?: "facebook" | "google" | "github";
+  socialMedia?: "google" | "github";
   onClick?: () => void;
 }
 
-export const Button = ({
-  text,
-  src,
-  alt,
-  socialMedia,
-  onClick,
-  ...other
-}: IButton) => {
+export const Button = ({ text, src, alt, socialMedia, onClick }: IButton) => {
   return (
     <motion.button
       className={clsx(
         "h-12 w-full shadow-default flex-center gap-2 rounded-lg font-semibold",
         {
-          "bg-[#475993] text-default-white": socialMedia === "facebook",
           "bg-[#252525] text-default-white": socialMedia === "github",
           "bg-[#FFFFFF] text-default-black px-5 py-4 border-[#DFDFDF] border-[1px]":
             socialMedia === "google",

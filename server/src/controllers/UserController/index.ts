@@ -3,106 +3,130 @@ import { userService } from '../../services/user'
 import { STATUS_CODE } from '../../constants/HTTP'
 import { IToken } from '../../types'
 import { cookiesCalc } from '../../utils'
-
-const { ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE, HTTP_ONLY } = process.env
-const httpOnly = HTTP_ONLY === 'true' ? true : false
+import { recoverPassword } from '../../services/user/recoverPassword'
 
 declare global {
   namespace Express {
     interface Request {
-      user: {
+      authenticatedUser: {
         token: IToken
       }
     }
   }
 }
 
+const { ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE, HTTP_ONLY } = process.env
+const httpOnly = HTTP_ONLY === 'true' ? true : false
+
 export const userController = {
   login: async (req: Request, res: Response) => {
-    const { email, password } = req.body
+    try {
+      const { email, password } = req.body
 
-    const { success, error, userTokens } = await userService.login({
-      email,
-      password
-    })
+      const { success, error, userTokens } = await userService.login({
+        email,
+        password
+      })
 
-    if (!success)
+      if (!success) throw new Error(error)
+
       return res
+        .status(STATUS_CODE.SUCCESS)
+        .cookie('accessToken', userTokens?.tokens?.accessToken, {
+          maxAge: cookiesCalc({
+            cookieMaxAge: ACCESS_TOKEN_MAX_AGE,
+            dataType: 'minutes'
+          }),
+          httpOnly,
+          sameSite: 'lax'
+        })
+        .cookie('refreshToken', userTokens?.tokens?.refreshToken, {
+          maxAge: cookiesCalc({
+            cookieMaxAge: REFRESH_TOKEN_MAX_AGE,
+            dataType: 'days'
+          }),
+          httpOnly,
+          sameSite: 'lax'
+        })
+        .send({ success })
+    } catch (error) {
+      console.log(error)
+      res
         .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
         .send({ success: false, error })
-
-    return res
-      .status(STATUS_CODE.SUCCESS)
-      .cookie('accessToken', userTokens?.tokens?.accessToken, {
-        maxAge: cookiesCalc({
-          cookieMaxAge: ACCESS_TOKEN_MAX_AGE,
-          dataType: 'minutes'
-        }),
-        httpOnly,
-        sameSite: 'lax'
-      })
-      .cookie('refreshToken', userTokens?.tokens?.refreshToken, {
-        maxAge: cookiesCalc({
-          cookieMaxAge: REFRESH_TOKEN_MAX_AGE,
-          dataType: 'days'
-        }),
-        httpOnly,
-        sameSite: 'lax'
-      })
-      .send({ success })
+    }
   },
 
   register: async (req: Request, res: Response) => {
-    const data = req.body
+    try {
+      const data = req.body
+      const { success, error } = await userService.register({ data })
 
-    const { success, error } = await userService.register({ data })
-    if (!success)
-      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(error)
-
-    return res.status(STATUS_CODE.CREATED).send({ success })
+      if (!success) throw new Error(error)
+      return res.status(STATUS_CODE.CREATED).send({ success })
+    } catch (error) {
+      console.log(error)
+      return res
+        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+        .send({ success: false, error })
+    }
   },
 
   userPersonalInfos: async (req: Request, res: Response) => {
-    const _id = req.user.token.sub
-    const { success, error, user } = await userService.userPersonalInfos({
-      _id
-    })
+    try {
+      const _id = req.authenticatedUser.token.sub
 
-    if (!success)
-      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(error)
-    return res.status(STATUS_CODE.SUCCESS).send({ success, user })
+      const { success, error, user } = await userService.userPersonalInfos({
+        _id
+      })
+      if (!success) throw new Error(error)
+
+      return res.status(STATUS_CODE.SUCCESS).send({ success, user })
+    } catch (error) {
+      console.log(error)
+      return res
+        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+        .send({ error, success: false })
+    }
   },
 
   updatePersonalInfos: async (req: Request, res: Response) => {
-    const data = req.body
-    const _id = req.user.token.sub
+    try {
+      const data = req.body
+      const _id = req.authenticatedUser.token.sub
 
-    const { success, error, user } = await userService.updatePersonalInfos({
-      _id,
-      data
-    })
+      const { success, error, user } = await userService.updatePersonalInfos({
+        _id,
+        data
+      })
+      if (!success) throw new Error(error)
 
-    if (!success)
-      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(error)
-    return res.status(STATUS_CODE.SUCCESS).send({ success, user })
+      return res.status(STATUS_CODE.SUCCESS).send({ success, user })
+    } catch (error) {
+      return res
+        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+        .send({ error, success: false })
+    }
   },
 
   deleteAccount: async (req: Request, res: Response) => {
-    const _id = req.user.token.sub
-    const { success, error } = await userService.deleteAccount({ _id })
+    try {
+      const _id = req.authenticatedUser.token.sub
 
-    if (!success)
+      const { success, error } = await userService.deleteAccount({ _id })
+      if (!success) throw new Error(error)
+
+      return res.status(STATUS_CODE.SUCCESS).send({ success })
+    } catch (error) {
       return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(error)
-    return res.status(STATUS_CODE.SUCCESS).send({ success })
+    }
   },
 
   logout: async (res: Response) => {
-    try {
-      return res
-        .clearCookie('accessToken')
-        .clearCookie('refreshToken')
-        .status(STATUS_CODE.NO_CONTENT)
-        .send()
-    } catch (error) {}
+    return res
+      .clearCookie('accessToken')
+      .clearCookie('refreshToken')
+      .status(STATUS_CODE.NO_CONTENT)
+      .send()
   }
 }

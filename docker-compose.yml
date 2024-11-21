@@ -15,6 +15,7 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+    image: gastronomy-nextjs:latest
     command: yarn dev
     ports:
       - "3001:3001"
@@ -26,13 +27,14 @@ services:
       - gastronomy-network
     volumes:
       - ./client:/app
-    environment:
-      - NODE_ENV=development
+    env_file:
+      - .env
 
   node-api:
     build:
       context: ./server
       dockerfile: Dockerfile
+    image: gastronomy-node-api:latest
     ports:
       - "3000:3000"
     env_file:

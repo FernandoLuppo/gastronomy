@@ -5,16 +5,24 @@ interface IUseApi {
   method: string;
   body?: any;
   cache?: boolean;
+  token?: string | { accessToken: string; refreshToken: string };
 }
 
-export const useApi = async ({ method, url, body, cache = true }: IUseApi) => {
+export const useApi = async ({
+  method,
+  url,
+  body,
+  cache = true,
+  token
+}: IUseApi) => {
   try {
     const response = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
       method: method.toUpperCase(),
       body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
       },
       credentials: "include",
       mode: "cors",

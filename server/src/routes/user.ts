@@ -1,13 +1,9 @@
 import { Router } from 'express'
 import { userController } from '../controllers/UserController'
-import { routesAuthentication } from '../middlewares/authentications/routesAuth/index.ts'
-import { tokenAuthentication } from '../middlewares/authentications/tokenAuth/index.ts'
+import { routesAuthentication } from '../middlewares/authentications/routesAuth'
+import { tokenAuthentication } from '../middlewares/authentications/tokenAuth'
 
 const userRouter = Router()
-userRouter.get('/test', (req, res) => {
-  console.log('test')
-  res.send({ message: '2' })
-})
 
 userRouter.post('/login', routesAuthentication.login, userController.login)
 

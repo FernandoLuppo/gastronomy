@@ -1,14 +1,19 @@
 import { Schema, model } from 'mongoose'
 
-export const Favorites = new Schema({
-  recipeId: {
-    type: [Number],
-    required: true
+export const Favorites = new Schema(
+  {
+    recipeId: {
+      type: [Number],
+      required: true
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      required: true
+    }
   },
-  userId: {
-    type: Schema.Types.ObjectId,
-    required: true
+  {
+    timestamps: true
   }
-})
+)
 
 export default model('favorites', Favorites)
