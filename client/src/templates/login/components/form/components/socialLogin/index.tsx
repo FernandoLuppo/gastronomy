@@ -4,18 +4,13 @@ import { Button } from "@/shared/components";
 import { handleForm } from "../../../../functions";
 import { buttonsConstants } from "@/shared/constants";
 
-export const SocialLogin = async () => {
+export const SocialLogin = () => {
   const { isSubmitting } = handleForm();
-  const { NEXT_PUBLIC_API_URL } = process.env;
 
-  const handleSocialLogin = async ({
-    socialMedia
-  }: {
-    socialMedia: string;
-  }) => {
+  const handleSocialLogin = ({ socialMedia }: { socialMedia: string }) => {
     try {
       window.open(
-        `${NEXT_PUBLIC_API_URL}/social-login/auth/${socialMedia}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/social-login/auth/${socialMedia}`,
         "_self"
       );
     } catch (error) {
@@ -34,7 +29,7 @@ export const SocialLogin = async () => {
             src={src}
             text={text}
             disabled={isSubmitting}
-            onClick={async () => await handleSocialLogin({ socialMedia })}
+            onClick={() => handleSocialLogin({ socialMedia })}
           />
         );
       })}

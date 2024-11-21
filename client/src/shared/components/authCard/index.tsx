@@ -13,7 +13,7 @@ export const AuthCard = () => {
       >
         <Image alt="" src="/icons/lobster.svg" width={400} height={400} />
         <h2 className="text-default-white text-3xl font-semibold max-w-80 text-center">
-          Learn to preper incredible dishes
+          Learn to prepare incredible dishes
         </h2>
       </motion.div>
     </div>

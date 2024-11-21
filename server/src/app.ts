@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import { userRouter, socialLoginRouter } from './routes'
+import { userRouter, recoverPasswordRouter, socialLoginRouter } from './routes'
 import * as dotenv from 'dotenv'
 import { initDb } from './config/db'
 import {
@@ -39,6 +39,7 @@ googleSocialLoginConfig()
 githubSocialLogin()
 
 app.use('/user', userRouter)
+app.use('/recover-password', recoverPasswordRouter)
 app.use('/social-login', socialLoginRouter)
 
 initDb()

@@ -2,9 +2,10 @@ import nodemailer from 'nodemailer'
 
 const emailConfig = () => {
   const { EMAIL_ADMIN, EMAIL_PASSWORD } = process.env
-
+  console.log({ EMAIL_ADMIN })
+  console.log({ EMAIL_PASSWORD })
   if (!EMAIL_ADMIN || !EMAIL_PASSWORD)
-    throw new Error('Email credentials are missing')
+    return { error: 'Email credentials are missing', success: false }
 
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -18,8 +19,8 @@ const emailConfig = () => {
       rejectUnauthorized: false
     }
   })
-
-  return { transporter }
+  console.log({ transporter })
+  return { transporter, success: true }
 }
 
 export { emailConfig }

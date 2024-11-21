@@ -1,6 +1,4 @@
-import { Transporter } from 'nodemailer'
 import { emailConfig } from '../../config/email'
-import { handleErrors } from '../../utils'
 import { recoverPasswordTemplate } from './template/recoverPassword'
 
 interface IRecoverPassword {
@@ -15,30 +13,27 @@ const EmailService = {
     recipientEmail,
     recipientName
   }: IRecoverPassword) => {
-    try {
-      const { EMAIL_ADMIN } = process.env
-      const { transporter } = emailConfig()
+    const { EMAIL_ADMIN } = process.env
+    const { transporter, success } = emailConfig()
+    console.log({ success })
+    if (!EMAIL_ADMIN)
+      return { error: 'Email credentials are missing', success: false }
+    if (!success || !transporter)
+      return { error: 'Error in email configuration', success: false }
+    console.log({ recipientEmail })
+    console.log({ recipientName })
+    console.log({ securityCode })
+    console.log({ EMAIL_ADMIN })
+    const template = recoverPasswordTemplate({
+      recipientEmail,
+      recipientName,
+      securityCode,
+      sender: EMAIL_ADMIN
+    })
 
-      if (!EMAIL_ADMIN) throw new Error('Email credentials are missing')
-      if (!transporter) throw new Error('Error in email configuration')
+    await transporter.sendMail(template)
 
-      const template = recoverPasswordTemplate({
-        recipientEmail,
-        recipientName,
-        securityCode,
-        sender: EMAIL_ADMIN
-      })
-
-      await transporter.sendMail(template)
-
-      return { success: true }
-    } catch (err) {
-      const { error, success } = handleErrors({
-        err,
-        errorMessage: 'Error in send email to user'
-      })
-      return { error, success }
-    }
+    return { success: true }
   }
 }
 

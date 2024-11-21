@@ -24,13 +24,11 @@ const submitData = async ({
 }: IRecoverPasswordCheckSecurityCodeBody) => {
   try {
     const securityCodeToken = await useToken.get({ tokenName: "emailToken" });
-    console.log("securityCodeToken: ", securityCodeToken);
 
     if (!securityCodeToken.success) throw new Error(securityCodeToken.error);
-    await useToken.clear({ tokenName: "emailToken" });
 
     const data = await useApi({
-      url: "/user/recover-password/check-security-code",
+      url: "/recover-password/check-security-code",
       method: "POST",
       body,
       token: securityCodeToken.token

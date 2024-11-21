@@ -17,7 +17,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log('Error in authentication: ', error)
+      console.log(error)
       return res
         .status(STATUS_CODE.UNAUTHORIZED)
         .send({ error, success: false })
@@ -31,7 +31,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log('Error in authentication: ', error)
+      console.log(error)
       return res
         .status(STATUS_CODE.UNAUTHORIZED)
         .send({ error, success: false })
@@ -45,7 +45,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log('Error in authentication: ', error)
+      console.log(error)
       return res
         .status(STATUS_CODE.UNAUTHORIZED)
         .send({ error, success: false })
@@ -63,7 +63,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log('Error in authentication: ', error)
+      console.log(error)
       return res
         .status(STATUS_CODE.UNAUTHORIZED)
         .send({ error, success: false })
@@ -81,7 +81,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log('Error in authentication: ', error)
+      console.log(error)
       return res
         .status(STATUS_CODE.UNAUTHORIZED)
         .send({ error, success: false })
@@ -95,7 +95,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log('Error in authentication: ', error)
+      console.log(error)
       return res
         .status(STATUS_CODE.UNAUTHORIZED)
         .send({ error, success: false })

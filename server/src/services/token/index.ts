@@ -8,7 +8,6 @@ import {
   IToken,
   ITokenValidate
 } from '../../types'
-import { handleErrors } from '../../utils'
 
 const {
   ACCESS_TOKEN_SECRET,
@@ -21,162 +20,112 @@ const {
 
 export const tokenService = {
   createUserToken: async ({ _id, content }: IPayload) => {
-    try {
-      if (!ACCESS_TOKEN_SECRET || !REFRESH_TOKEN_SECRET)
-        throw new Error('Token secret is missing!')
+    if (!ACCESS_TOKEN_SECRET || !REFRESH_TOKEN_SECRET)
+      return { error: 'Token secret is missing!', success: false }
 
-      const accessToken = _createToken({
-        payload: { content, role: 'accessToken' },
-        sub: _id,
-        expiresIn: `${ACCESS_TOKEN_MAX_AGE}m`,
-        secret: ACCESS_TOKEN_SECRET
-      })
-      if (!accessToken.success)
-        throw new Error('Error in access token creation.')
+    const accessToken = _createToken({
+      payload: { content, role: 'accessToken' },
+      sub: _id,
+      expiresIn: `${ACCESS_TOKEN_MAX_AGE}m`,
+      secret: ACCESS_TOKEN_SECRET
+    })
+    const refreshToken = _createToken({
+      payload: { content, role: 'refreshToken' },
+      sub: _id,
+      expiresIn: `${REFRESH_TOKEN_MAX_AGE}d`,
+      secret: REFRESH_TOKEN_SECRET
+    })
 
-      const refreshToken = _createToken({
-        payload: { content, role: 'refreshToken' },
-        sub: _id,
-        expiresIn: `${REFRESH_TOKEN_MAX_AGE}d`,
-        secret: REFRESH_TOKEN_SECRET
-      })
-      if (!refreshToken.success)
-        throw new Error('Error in refresh token creation.')
+    const refreshTokenExpiresDate = dayjs()
+      .add(Number(REFRESH_TOKEN_MAX_AGE), 'day')
+      .toDate()
 
-      const refreshTokenExpiresDate = dayjs()
-        .add(Number(REFRESH_TOKEN_MAX_AGE), 'day')
-        .toDate()
+    const newRefreshToken = {
+      refreshToken: refreshToken.token,
+      expireDat: refreshTokenExpiresDate,
+      userToken: _id
+    }
 
-      const newRefreshToken = {
-        refreshToken: refreshToken.token,
-        expireDat: refreshTokenExpiresDate,
-        userToken: _id
+    await _saveToken({ _id, refreshToken: newRefreshToken })
+
+    return {
+      success: true,
+      tokens: {
+        accessToken: accessToken.token,
+        refreshToken: refreshToken.token
       }
-
-      await _saveToken({ _id, refreshToken: newRefreshToken })
-
-      return {
-        success: true,
-        tokens: {
-          accessToken: accessToken.token,
-          refreshToken: refreshToken.token
-        }
-      }
-    } catch (err) {
-      const { error, success } = handleErrors({
-        err,
-        errorMessage: 'Error in creating user token'
-      })
-      return { error, success }
     }
   },
 
   createEmailToken: ({ _id, content = {} }: IPayload) => {
-    try {
-      if (!EMAIL_TOKEN_SECRET) throw new Error('Token secret is missing!')
+    if (!EMAIL_TOKEN_SECRET)
+      return { error: 'Token secret is missing!', success: false }
 
-      const emailToken = _createToken({
-        payload: { content, role: 'emailToken' },
-        sub: _id,
-        expiresIn: `${EMAIL_TOKEN_MAX_AGE}m`,
-        secret: EMAIL_TOKEN_SECRET
-      })
-      if (!emailToken.success) throw new Error('Error in email token creation.')
+    const emailToken = _createToken({
+      payload: { content, role: 'emailToken' },
+      sub: _id,
+      expiresIn: `${EMAIL_TOKEN_MAX_AGE}m`,
+      secret: EMAIL_TOKEN_SECRET
+    })
+    if (!emailToken.success)
+      return { error: 'Error in email token creation.', success: false }
 
-      return { success: true, emailToken: emailToken.token }
-    } catch (err) {
-      const { error, success } = handleErrors({
-        err,
-        errorMessage: 'Error in creating email token'
-      })
-      return { error, success }
-    }
+    return { success: true, emailToken: emailToken.token }
   },
 
   validateToken: ({ req, token, secret }: ITokenValidate) => {
-    try {
-      const secretKey = _searchTokenSecretKey({ secret })
-      if (!secretKey) throw new Error('Token secret key is undefined!')
-      const tokenWithoutBearer = token.replace('Bearer ', '')
+    const secretKey = _searchTokenSecretKey({ secret })
+    if (!secretKey)
+      return { error: 'Token secret key is undefined!', success: false }
+    const tokenWithoutBearer = token.replace('Bearer ', '')
 
-      const decodedToken = verify(tokenWithoutBearer, secretKey) as {
-        sub: string
-        content: any
-      }
-      req.authenticatedUser = {
-        token: {
-          sub: decodedToken.sub,
-          content: decodedToken.content
-        }
-      }
-
-      return { success: true, decodedToken }
-    } catch (err) {
-      const { error, success } = handleErrors({
-        err,
-        errorMessage: 'Error in validation token'
-      })
-      return { error, success }
+    const decodedToken = verify(tokenWithoutBearer, secretKey) as {
+      sub: string
+      content: any
     }
+    req.authenticatedUser = {
+      token: {
+        sub: decodedToken.sub,
+        content: decodedToken.content
+      }
+    }
+
+    return { success: true, decodedToken }
   },
 
   extractTokenFromHeader: ({ authorization }: { authorization: string }) => {
-    try {
-      if (!authorization) throw new Error('Authorization header is missing')
+    if (!authorization)
+      return { error: 'Authorization header is missing', success: false }
 
-      const [type, tokens] = authorization.split(' ')
-      if (type !== 'Bearer' || !tokens) throw new Error('Invalid token format')
+    const [type, tokens] = authorization.split(' ')
+    if (type !== 'Bearer' || !tokens)
+      return { error: 'Invalid token format', success: false }
 
-      return {
-        success: true,
-        accessToken: JSON.parse(tokens).accessToken,
-        refreshToken: JSON.parse(tokens).refreshToken
-      }
-    } catch (err) {
-      const { error, success } = handleErrors({
-        err,
-        errorMessage: 'Error in creating token'
-      })
-      return { error, success }
+    return {
+      success: true,
+      accessToken: JSON.parse(tokens).accessToken,
+      refreshToken: JSON.parse(tokens).refreshToken
     }
   }
 }
 
 const _createToken = ({ payload, sub, expiresIn, secret }: ICreateToken) => {
-  console.log({ payload, sub, expiresIn, secret })
+  const token = sign(payload, secret, {
+    subject: sub,
+    expiresIn
+  })
 
-  try {
-    const token = sign(payload, secret, {
-      subject: sub,
-      expiresIn
-    })
-
-    return { success: true, token }
-  } catch (err) {
-    const { error, success } = handleErrors({
-      err,
-      errorMessage: 'Error in creating token'
-    })
-    return { error, success }
-  }
+  return { success: true, token }
 }
 
 const _saveToken = async ({ _id, refreshToken }: ISaveToken) => {
-  try {
-    const token = await Token.findOneAndUpdate(
-      { userToken: _id },
-      { $set: refreshToken },
-      { upsert: true, new: true }
-    )
+  const token = await Token.findOneAndUpdate(
+    { userToken: _id },
+    { $set: refreshToken },
+    { upsert: true, new: true }
+  )
 
-    if (!token) throw new Error('Error saving token!')
-  } catch (err) {
-    const { error, success } = handleErrors({
-      err,
-      errorMessage: 'Error in save user token'
-    })
-    return { error, success }
-  }
+  if (!token) return { error: 'Error saving token!', success: false }
 }
 
 const _searchTokenSecretKey = ({
