@@ -1,3 +1,3 @@
 export * from './Token'
-export * from './user/Favorites'
-export * from './user/User'
+export * from './User/Favorites'
+export * from './User'

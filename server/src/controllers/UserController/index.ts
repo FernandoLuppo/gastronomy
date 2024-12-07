@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { userService } from '../../services/user'
 import { STATUS_CODE } from '../../constants/HTTP'
 import { IToken } from '../../types'
-import { cookiesCalc } from '../../utils'
+import { cookiesCalc } from '../../utils/helpers'
 import { recoverPassword } from '../../services/user/recoverPassword'
 
 declare global {

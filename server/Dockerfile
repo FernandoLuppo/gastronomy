@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package.json yarn.lock ./
 
-RUN --rm yarn install --frozen-lockfile --silent
+RUN yarn install --frozen-lockfile --silent
 
 COPY . .
 
