@@ -1,6 +1,5 @@
-import { Request } from 'express'
-import User from '../../../models/user/User'
-import { securityCodeGenerator } from '../../../utils'
+import User from '../../../models/User'
+import { securityCodeGenerator } from '../../../utils/helpers/securityCodeGenerator'
 import { tokenService } from '../../token'
 import { encrypt } from '../encryptPassword'
 import { EmailService } from '../../email'
@@ -21,16 +20,18 @@ export const recoverPassword = {
 
     if (!success)
       return { error: `Error in create email token: ${error}`, success: false }
-    console.log({ user })
-    console.log({ securityCode })
+
     const emailService = await EmailService.recoverPassword({
       recipientEmail: user.email,
       recipientName: user.name,
       securityCode
     })
-    console.log(7)
+
     if (!emailService.success)
-      return { error: emailService.error, success: false }
+      return {
+        error: emailService.error || 'Error trying to send email to user',
+        success: false
+      }
 
     return { success, emailToken, securityCode }
   },

@@ -1,13 +1,11 @@
-import Token from '../../models/Token'
-import { sign, verify } from 'jsonwebtoken'
+import { verify } from 'jsonwebtoken'
 import dayjs from 'dayjs'
+import { IPayload, ITokenValidate } from '../../types'
 import {
-  ICreateToken,
-  IPayload,
-  ISaveToken,
-  IToken,
-  ITokenValidate
-} from '../../types'
+  createToken,
+  saveToken,
+  searchTokenSecretKey
+} from '../../utils/domain'
 
 const {
   ACCESS_TOKEN_SECRET,
@@ -23,13 +21,15 @@ export const tokenService = {
     if (!ACCESS_TOKEN_SECRET || !REFRESH_TOKEN_SECRET)
       return { error: 'Token secret is missing!', success: false }
 
-    const accessToken = _createToken({
+    if (!_id) return { error: '_id is missing!', success: false }
+
+    const accessToken = createToken({
       payload: { content, role: 'accessToken' },
       sub: _id,
       expiresIn: `${ACCESS_TOKEN_MAX_AGE}m`,
       secret: ACCESS_TOKEN_SECRET
     })
-    const refreshToken = _createToken({
+    const refreshToken = createToken({
       payload: { content, role: 'refreshToken' },
       sub: _id,
       expiresIn: `${REFRESH_TOKEN_MAX_AGE}d`,
@@ -46,7 +46,7 @@ export const tokenService = {
       userToken: _id
     }
 
-    await _saveToken({ _id, refreshToken: newRefreshToken })
+    await saveToken({ _id, refreshToken: newRefreshToken })
 
     return {
       success: true,
@@ -61,7 +61,9 @@ export const tokenService = {
     if (!EMAIL_TOKEN_SECRET)
       return { error: 'Token secret is missing!', success: false }
 
-    const emailToken = _createToken({
+    if (!_id) return { error: '_id is missing!', success: false }
+
+    const emailToken = createToken({
       payload: { content, role: 'emailToken' },
       sub: _id,
       expiresIn: `${EMAIL_TOKEN_MAX_AGE}m`,
@@ -74,11 +76,13 @@ export const tokenService = {
   },
 
   validateToken: ({ req, token, secret }: ITokenValidate) => {
-    const secretKey = _searchTokenSecretKey({ secret })
+    if (!token) return { error: 'Token is missing', success: false }
+
+    const secretKey = searchTokenSecretKey({ secret })
     if (!secretKey)
       return { error: 'Token secret key is undefined!', success: false }
-    const tokenWithoutBearer = token.replace('Bearer ', '')
 
+    const tokenWithoutBearer = token.replace('Bearer ', '')
     const decodedToken = verify(tokenWithoutBearer, secretKey) as {
       sub: string
       content: any
@@ -107,37 +111,4 @@ export const tokenService = {
       refreshToken: JSON.parse(tokens).refreshToken
     }
   }
-}
-
-const _createToken = ({ payload, sub, expiresIn, secret }: ICreateToken) => {
-  const token = sign(payload, secret, {
-    subject: sub,
-    expiresIn
-  })
-
-  return { success: true, token }
-}
-
-const _saveToken = async ({ _id, refreshToken }: ISaveToken) => {
-  const token = await Token.findOneAndUpdate(
-    { userToken: _id },
-    { $set: refreshToken },
-    { upsert: true, new: true }
-  )
-
-  if (!token) return { error: 'Error saving token!', success: false }
-}
-
-const _searchTokenSecretKey = ({
-  secret
-}: {
-  secret: 'accessToken' | 'refreshToken' | 'emailToken'
-}) => {
-  const tokens = {
-    accessToken: ACCESS_TOKEN_SECRET,
-    refreshToken: REFRESH_TOKEN_SECRET,
-    emailToken: EMAIL_TOKEN_SECRET
-  }
-
-  return tokens[secret]
 }

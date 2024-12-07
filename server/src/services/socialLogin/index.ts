@@ -1,4 +1,4 @@
-import { randomPasswordGenerator } from '../../utils'
+import { randomPasswordGenerator } from '../../utils/helpers/randomPasswordGenerator'
 import { userService } from '../user'
 
 interface ISocialLogin {
@@ -23,7 +23,6 @@ const socialLoginService = {
           password: newPassword
         }
       })
-
       if (!userRegister.success || !userRegister.data)
         return { error: 'Unable to register user', success: false }
 
@@ -31,7 +30,6 @@ const socialLoginService = {
         email: userRegister.data.email,
         password: newPassword
       })
-
       if (!userAlreadyRegisteredLogin.success)
         return { error: 'Unable to make a login', success: false }
 

@@ -9,7 +9,6 @@ import {
   googleSocialLoginConfig
 } from './config/socialLogin'
 import passport from 'passport'
-import GoogleStrategy from 'passport-google-oauth20'
 import session from 'express-session'
 
 dotenv.config()
@@ -42,6 +41,6 @@ app.use('/user', userRouter)
 app.use('/recover-password', recoverPasswordRouter)
 app.use('/social-login', socialLoginRouter)
 
-initDb()
+// initDb()
 
 export { app }

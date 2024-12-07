@@ -14,11 +14,7 @@ export const decrypt = async ({
   password: string
   comparePassword: string
 }) => {
-  console.log({ password })
-  console.log({ comparePassword })
   const matchPasswords = await bcryptjs.compare(password, comparePassword)
-  console.log({ matchPasswords })
-
   if (!matchPasswords) return { error: "Password don't match!", success: false }
 
   return { success: true }
