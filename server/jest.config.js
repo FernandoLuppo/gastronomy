@@ -1,4 +1,5 @@
 const { resolve } = require('path')
+const { pathsToModuleNameMapper } = require('ts-jest')
 
 module.exports = {
   rootDir: resolve(__dirname),
@@ -7,5 +8,10 @@ module.exports = {
   testEnvironment: 'node',
   clearMocks: true,
   preset: 'ts-jest',
-  setupFilesAfterEnv: ['<rootDir>/__test__/config/test-setup.ts']
+  setupFilesAfterEnv: ['<rootDir>/__test__/config/test-setup.ts'],
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.json'
+    }
+  }
 }

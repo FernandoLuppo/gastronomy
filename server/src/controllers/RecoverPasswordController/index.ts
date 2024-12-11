@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { STATUS_CODE } from '../../constants/HTTP'
 import { recoverPassword } from '../../services/user/recoverPassword'
-import { cookiesCalc } from '../../utils'
+import { cookiesCalc } from '../../utils/helpers'
 
 const { EMAIL_TOKEN_MAX_AGE, HTTP_ONLY } = process.env
 const httpOnly = HTTP_ONLY === 'true' ? true : false

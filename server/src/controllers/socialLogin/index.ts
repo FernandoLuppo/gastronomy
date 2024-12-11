@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { socialLoginService } from '../../services/socialLogin'
 import { STATUS_CODE } from '../../constants/HTTP'
-import { cookiesCalc } from '../../utils'
+import { cookiesCalc } from '../../utils/helpers'
 
 const { ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE, HTTP_ONLY } = process.env
 const httpOnly = HTTP_ONLY === 'true' ? true : false

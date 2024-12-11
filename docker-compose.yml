@@ -51,9 +51,8 @@ services:
   mongodb:
     image: mongo
     restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    env_file:
+      - .env
     ports:
       - "27018:27017"
     volumes:
@@ -65,9 +64,8 @@ services:
   mongodb-test:
     image: mongo
     restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME_TEST}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD_TEST}
+    env_file:
+      - .env
     ports:
       - "27019:27017"
     volumes:

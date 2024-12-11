@@ -1,4 +1,4 @@
-import User from '../../models/user/User'
+import User from '../../models/User'
 import { decrypt, encrypt } from './encryptPassword'
 import { tokenService } from '../token'
 
@@ -6,6 +6,12 @@ interface ILogin {
   email: string
   password?: string
   socialLogin?: boolean
+}
+
+interface IUpdatePersonalInfos {
+  name?: string
+  email?: string
+  password?: string
 }
 
 export const userService = {
@@ -16,17 +22,31 @@ export const userService = {
     return { user, success: true }
   },
 
-  updatePersonalInfos: async ({ data, _id }: { data: any; _id: string }) => {
-    const newPassword = encrypt({ password: data.password })
-    data.password = newPassword
+  updatePersonalInfos: async ({
+    data,
+    _id
+  }: {
+    data: IUpdatePersonalInfos
+    _id: string
+  }) => {
+    if (data.password) {
+      const { encryptedUserPassword } = encrypt({ password: data.password })
+      data.password = encryptedUserPassword
+    }
 
-    const user = await User.updateOne(
+    const newData = {
+      ...(data.name && { name: data.name }),
+      ...(data.email && { email: data.email }),
+      ...(data.password && { password: data.password })
+    }
+
+    const user = await User.findOneAndUpdate(
       { _id },
       {
-        $set: data
-      }
+        $set: newData
+      },
+      { new: true }
     ).select('-password')
-
     if (!user) return { error: 'User not found!', success: false }
 
     return { user, success: true }
@@ -53,7 +73,7 @@ export const userService = {
     })
     if (!userTokens.success) return { error: userTokens.error, success: false }
 
-    return { userTokens, success: true }
+    return { userTokens: { tokens: userTokens.tokens }, success: true }
   },
 
   register: async ({
@@ -61,12 +81,19 @@ export const userService = {
   }: {
     data: { name: string; email: string; password: string }
   }) => {
+    if (!data.name || !data.email || data.password.length < 8)
+      return { error: 'Data is missing', success: false }
+
     const { encryptedUserPassword } = encrypt({
       password: data.password
     })
-    data.password = encryptedUserPassword
+    const newData = {
+      name: data.name,
+      email: data.email,
+      password: encryptedUserPassword
+    }
 
-    const user = await User.create(data)
+    const user = await User.create(newData)
     if (!user) return { error: 'User not found!', success: false }
 
     const userData = {
