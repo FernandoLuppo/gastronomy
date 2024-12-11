@@ -43,4 +43,6 @@ app.use('/social-login', socialLoginRouter)
 
 // initDb()
 
+console.log('test')
+
 export { app }
