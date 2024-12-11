@@ -2,15 +2,15 @@ import passport from 'passport'
 import GitHubStrategy from 'passport-github2'
 
 const githubSocialLogin = () => {
-  const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = process.env
-  if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET)
+  const { GHUB_CLIENT_ID, GHUB_CLIENT_SECRET } = process.env
+  if (!GHUB_CLIENT_ID || !GHUB_CLIENT_SECRET)
     throw new Error('Google envs is missing')
 
   passport.use(
     new GitHubStrategy.Strategy(
       {
-        clientID: GITHUB_CLIENT_ID,
-        clientSecret: GITHUB_CLIENT_SECRET,
+        clientID: GHUB_CLIENT_ID,
+        clientSecret: GHUB_CLIENT_SECRET,
         callbackURL: 'http://localhost:3000/social-login/auth/github/callback',
         scope: ['user:email']
       },
