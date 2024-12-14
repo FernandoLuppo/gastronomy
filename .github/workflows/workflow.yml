@@ -64,13 +64,14 @@ jobs:
           EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
           EOF
 
-      - name: Install Docker Compose
+      - name: Install Docker Compose (standalone)
         run: |
-          sudo apt-get update
-          sudo apt-get install docker-compose -y
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version  # Verifique a versão do Docker Compose para confirmar
 
       - name: Start Services with Docker compose
-        run: docker-compose up -d
+        run: docker compose up -d # Alterado para 'docker compose'
 
       - name: Wait for Services to be Ready
         run: sleep 15
@@ -89,10 +90,10 @@ jobs:
 
       - name: Run Server Tests Inside Container
         run: |
-          docker-compose exec server sh -c "
+          docker compose exec server sh -c "
           yarn install &&
           yarn test
-          "
+          "  # Alterado para 'docker compose'
 
   build-client:
     name: Build Client
@@ -106,12 +107,12 @@ jobs:
       - name: Debug Working Directory
         run: ls -al
 
-      - name: Run Server Tests Inside Container
+      - name: Build Client Inside Container
         run: |
-          docker-compose exec server sh -c "
+          docker compose exec server sh -c "
           yarn install &&
           yarn build
-          "
+          "  # Alterado para 'docker compose'
 
   cleanup:
     name: Cleanup Docker
@@ -120,4 +121,4 @@ jobs:
 
     steps:
       - name: Stop Docker Compose
-        run: docker-compose down
+        run: docker compose down # Alterado para 'docker compose'
