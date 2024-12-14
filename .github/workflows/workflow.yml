@@ -56,7 +56,7 @@ jobs:
           EOF
 
       - name: Start Docker containers
-        run: docker-compose up -d
+        run: docker-compose up --build -d
 
       - name: Debug running containers
         run: docker-compose ps
