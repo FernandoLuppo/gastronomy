@@ -18,7 +18,7 @@ jobs:
       mongodb:
         image: mongo:latest
         ports:
-          - 27018:27017
+          - 27020:27017
         volumes:
           - mongo-vol:/data/db
 
@@ -59,6 +59,15 @@ jobs:
 
       - name: List files in the repository
         run: ls -al
+
+      - name: List files in client directory
+        run: ls -al client
+
+      - name: List files in server directory
+        run: ls -al server
+
+      - name: Show content of docker-compose.yml
+        run: cat docker-compose.yml
 
       - name: Start Docker containers
         run: docker-compose up --build -d
