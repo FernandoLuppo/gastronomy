@@ -37,6 +37,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          path: gastronomy
 
       - name: Create .env file
         run: |
