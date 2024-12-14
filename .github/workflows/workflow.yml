@@ -92,12 +92,7 @@ jobs:
 
       - name: Install Dependencies for Server
         working-directory: ./server
-        run: |
-          if [ ! -f yarn.lock ]; then
-            echo "yarn.lock not found in server directory"
-            exit 1
-          fi
-          yarn install
+        run: yarn install
 
       - name: Run Server Tests
         working-directory: ./server
@@ -120,12 +115,7 @@ jobs:
 
       - name: Install Dependencies for Client
         working-directory: ./client
-        run: |
-          if [ ! -f yarn.lock ]; then
-            echo "yarn.lock not found in client directory"
-            exit 1
-          fi
-          yarn install
+        run: yarn install
 
       - name: Build Client
         working-directory: ./client
