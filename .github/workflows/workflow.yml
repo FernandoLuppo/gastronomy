@@ -55,8 +55,19 @@ jobs:
           EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
           EOF
 
+      - name: Debug running containers
+        run: docker ps -a
+
+      - name: Get MongoDB logs
+        if: failure()
+        run: docker-compose logs mongodb
+
       - name: Start Docker containers
         run: docker-compose up -d
+
+      - name: Get MongoDB logs
+        if: failure()
+        run: docker-compose logs mongodb
 
       - name: Run tests in Next.js container
         run: |
