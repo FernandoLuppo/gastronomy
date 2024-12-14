@@ -58,16 +58,25 @@ jobs:
       - name: Debug running containers
         run: docker ps -a
 
-      - name: Get MongoDB logs
-        if: failure()
-        run: docker-compose logs mongodb
-
       - name: Start Docker containers
         run: docker-compose up -d
 
-      - name: Get MongoDB logs
-        if: failure()
-        run: docker-compose logs mongodb
+      - name: Wait for Next.js container to be ready
+        run: |
+          for i in {1..10}; do
+            if docker ps | grep nextjs; then
+              echo "Next.js container is ready."
+              break
+            fi
+            echo "Waiting for Next.js container..."
+            sleep 5
+          done
+
+      - name: Debug running containers
+        run: docker ps -a
+
+      - name: Check Next.js container logs
+        run: docker-compose logs nextjs
 
       - name: Run tests in Next.js container
         run: |
