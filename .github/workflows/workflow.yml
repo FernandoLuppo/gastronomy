@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
   build:
@@ -54,6 +56,9 @@ jobs:
           REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
           EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
           EOF
+
+      - name: List files in the repository
+        run: ls -al
 
       - name: Start Docker containers
         run: docker-compose up --build -d

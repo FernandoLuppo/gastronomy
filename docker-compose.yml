@@ -42,7 +42,7 @@ services:
       - mongodb-test
     networks:
       - gastronomy-network
-    command: sh -c "yarn dev"
+    command: yarn dev
     volumes:
       - ./server:/app
 
@@ -52,7 +52,7 @@ services:
     env_file:
       - .env
     ports:
-      - "27020:27017"
+      - "27018:27017"
     volumes:
       - mongo-vol:/data/db
       - mongodb-config-vol:/data/configdb
