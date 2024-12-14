@@ -37,8 +37,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-        with:
-          path: gastronomy
 
       - name: Create .env file
         run: |
@@ -89,19 +87,12 @@ jobs:
       - name: Debug Working Directory
         run: ls -al
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 22
-          cache: "yarn"
-
-      - name: Install Dependencies for Server
-        working-directory: ./server
-        run: yarn install
-
-      - name: Run Server Tests
-        working-directory: ./server
-        run: yarn test
+      - name: Run Server Tests Inside Container
+        run: |
+          docker-compose exec server sh -c "
+          yarn install &&
+          yarn test
+          "
 
   build-client:
     name: Build Client
@@ -115,19 +106,12 @@ jobs:
       - name: Debug Working Directory
         run: ls -al
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 22
-          cache: "yarn"
-
-      - name: Install Dependencies for Client
-        working-directory: ./client
-        run: yarn install
-
-      - name: Build Client
-        working-directory: ./client
-        run: yarn build
+      - name: Run Server Tests Inside Container
+        run: |
+          docker-compose exec server sh -c "
+          yarn install &&
+          yarn build
+          "
 
   cleanup:
     name: Cleanup Docker
