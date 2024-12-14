@@ -60,11 +60,11 @@ jobs:
       - name: List files in the repository
         run: ls -al
 
-      - name: List files in client directory
-        run: ls -al client
+      # - name: List files in client directory
+      #   run: ls -al client
 
       - name: List files in server directory
-        run: ls -al server
+        run: cat ./service/package.json
 
       - name: Show content of docker-compose.yml
         run: cat docker-compose.yml
@@ -75,14 +75,14 @@ jobs:
       - name: Debug running containers
         run: docker-compose ps
 
-      - name: Check Node API container logs
-        run: docker-compose logs node-api
+      # - name: Check Node API container logs
+      #   run: docker-compose logs node-api
 
-      - name: Check if dependencies are installed
-        run: docker-compose exec node-api yarn list
+      # - name: Check if dependencies are installed
+      #   run: docker-compose exec node-api yarn list
 
-      - name: Check Node API logs
-        run: docker-compose logs node-api
+      # - name: Check Node API logs
+      #   run: docker-compose logs node-api
 
       - name: Run tests in Node.js API container
         run: |
