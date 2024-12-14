@@ -55,32 +55,8 @@ jobs:
           EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
           EOF
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
       - name: Start Docker containers
         run: docker-compose up -d
-
-      - name: Copy .env to Docker container
-        run: |
-          docker cp .env nextjs:/app/.env
-          docker cp .env node-api:/app/.env
-
-      - name: Install dependencies in Next.js container
-        run: |
-          docker-compose exec nextjs sh -c "yarn install"
-
-      - name: Install dependencies in Node.js API container
-        run: |
-          docker-compose exec node-api sh -c "yarn install"
 
       - name: Run tests in Next.js container
         run: |
