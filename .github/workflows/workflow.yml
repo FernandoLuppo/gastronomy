@@ -84,14 +84,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Debug Working Directory
+        run: ls -al
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 22
           cache: "yarn"
-
-      - name: Debug Working Directory
-        run: ls -al
 
       - name: Install Dependencies for Server
         working-directory: ./server
@@ -110,14 +110,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Debug Working Directory
+        run: ls -al
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 22
           cache: "yarn"
-
-      - name: Debug Working Directory
-        run: ls -al
 
       - name: Install Dependencies for Client
         working-directory: ./client
