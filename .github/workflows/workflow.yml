@@ -55,11 +55,11 @@ jobs:
           EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
           EOF
 
-      - name: Debug running containers
-        run: docker ps -a
-
       - name: Start Docker containers
         run: docker-compose up -d
+
+      - name: Debug running containers
+        run: docker-compose ps
 
       - name: Run tests in Node.js API container
         run: |
