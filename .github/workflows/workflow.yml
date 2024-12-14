@@ -32,7 +32,7 @@ env:
 jobs:
   setup:
     name: Setup Environment
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout Repository
@@ -77,7 +77,7 @@ jobs:
 
   test-server:
     name: Test Server
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: setup
 
     steps:
@@ -92,7 +92,12 @@ jobs:
 
       - name: Install Dependencies for Server
         working-directory: ./server
-        run: yarn install
+        run: |
+          if [ ! -f yarn.lock ]; then
+            echo "yarn.lock not found in server directory"
+            exit 1
+          fi
+          yarn install
 
       - name: Run Server Tests
         working-directory: ./server
@@ -100,7 +105,7 @@ jobs:
 
   build-client:
     name: Build Client
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: setup
 
     steps:
@@ -115,7 +120,12 @@ jobs:
 
       - name: Install Dependencies for Client
         working-directory: ./client
-        run: yarn install
+        run: |
+          if [ ! -f yarn.lock ]; then
+            echo "yarn.lock not found in client directory"
+            exit 1
+          fi
+          yarn install
 
       - name: Build Client
         working-directory: ./client
@@ -123,7 +133,7 @@ jobs:
 
   cleanup:
     name: Cleanup Docker
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [test-server, build-client]
 
     steps:
