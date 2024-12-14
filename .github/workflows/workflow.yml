@@ -1,42 +1,28 @@
-name: CI Pipeline
+name: Docker Build and Test
 
 on:
   push:
-    branches: ["main", "develop"]
+    branches:
+      - main
   pull_request:
-    branches: ["main", "develop"]
-
-env:
-  AMBIENT: ${{ secrets.AMBIENT }}
-  NEXT_PUBLIC_URL: ${{ secrets.NEXT_PUBLIC_URL }}
-  NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-  PORT: ${{ secrets.PORT }}
-  MONGO_DEV_URI: ${{ secrets.MONGO_DEV_URI }}
-  ACCESS_TOKEN_MAX_AGE: ${{ secrets.ACCESS_TOKEN_MAX_AGE }}
-  REFRESH_TOKEN_MAX_AGE: ${{ secrets.REFRESH_TOKEN_MAX_AGE }}
-  EMAIL_TOKEN_MAX_AGE: ${{ secrets.EMAIL_TOKEN_MAX_AGE }}
-  HTTP_ONLY: ${{ secrets.HTTP_ONLY }}
-  EMAIL_ADMIN: ${{ secrets.EMAIL_ADMIN }}
-  EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-  GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-  GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-  GHUB_CLIENT_ID: ${{ secrets.GHUB_CLIENT_ID }}
-  GHUB_CLIENT_SECRET: ${{ secrets.GHUB_CLIENT_SECRET }}
-  SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  MONGO_TEST_URI: ${{ secrets.MONGO_TEST_URI }}
-  TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
-  ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
-  REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
-  EMAIL_TOKEN_SECRET: ${{ secrets.EMAIL_TOKEN_SECRET }}
+    branches:
+      - main
 
 jobs:
-  setup:
-    name: Setup Environment
-    runs-on: ubuntu-22.04
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27018:27017
+        volumes:
+          - mongo-vol:/data/db
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Create .env file
         run: |
@@ -64,61 +50,35 @@ jobs:
           EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
           EOF
 
-      - name: Install Docker Compose (standalone)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Copy .env to Docker container
         run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/v2.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-          docker-compose --version  # Verifique a versão do Docker Compose para confirmar
+          docker-compose up -d # Levanta os containers
+          docker cp .env nextjs:/app/.env # Copia o arquivo .env para o container 'nextjs'
+          docker cp .env node-api:/app/.env # Copia o arquivo .env para o container 'node-api'
 
-      - name: Start Services with Docker compose
-        run: docker compose up -d # Alterado para 'docker compose'
-
-      - name: Wait for Services to be Ready
-        run: sleep 15
-
-  test-server:
-    name: Test Server
-    runs-on: ubuntu-22.04
-    needs: setup
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Debug Working Directory
-        run: ls -al
-
-      - name: Run Server Tests Inside Container
+      - name: Install dependencies in Next.js container
         run: |
-          docker compose exec server sh -c "
-          yarn install &&
-          yarn test
-          "  # Alterado para 'docker compose'
+          docker-compose exec nextjs sh -c "yarn install"
 
-  build-client:
-    name: Build Client
-    runs-on: ubuntu-22.04
-    needs: setup
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Debug Working Directory
-        run: ls -al
-
-      - name: Build Client Inside Container
+      - name: Install dependencies in Node.js API container
         run: |
-          docker compose exec server sh -c "
-          yarn install &&
-          yarn build
-          "  # Alterado para 'docker compose'
+          docker-compose exec node-api sh -c "yarn install"
 
-  cleanup:
-    name: Cleanup Docker
-    runs-on: ubuntu-22.04
-    needs: [test-server, build-client]
+      - name: Run tests in Next.js container
+        run: |
+          docker-compose exec nextjs sh -c "yarn test"
 
-    steps:
-      - name: Stop Docker Compose
-        run: docker compose down # Alterado para 'docker compose'
+      - name: Run tests in Node.js API container
+        run: |
+          docker-compose exec node-api sh -c "yarn test"
