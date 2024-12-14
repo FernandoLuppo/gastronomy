@@ -42,7 +42,7 @@ services:
       - mongodb-test
     networks:
       - gastronomy-network
-    command: yarn dev
+    command: sh -c "yarn dev"
     volumes:
       - ./server:/app
 

@@ -61,6 +61,20 @@ jobs:
       - name: Debug running containers
         run: docker-compose ps
 
+      - name: Check Node API container logs
+        run: docker-compose logs node-api
+
+      - name: Wait for Node API container to be ready
+        run: |
+          for i in {1..10}; do
+            if docker ps | grep gastronomy-node-api; then
+              echo "Node API container is ready."
+              break
+            fi
+            echo "Waiting for Node API container..."
+            sleep 5
+          done
+
       - name: Run tests in Node.js API container
         run: |
           docker-compose exec node-api sh -c "yarn test"
