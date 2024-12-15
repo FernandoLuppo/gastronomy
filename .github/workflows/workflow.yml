@@ -61,7 +61,7 @@ jobs:
         run: docker-compose up --build -d
 
       - name: Check MongoDB container logs
-        run: docker-compose exec mongodb sh -c "mongo --eval 'db.runCommand({ connectionStatus: 1 })'"
+          run: docker-compose exec mongodb mongo --eval "db.version()"
 
 
       # - name: Debug running containers
