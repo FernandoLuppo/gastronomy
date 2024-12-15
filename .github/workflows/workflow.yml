@@ -57,20 +57,20 @@ jobs:
           EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
           EOF
 
-      - name: List files in the current directory
-        run: ls -alh
+      # - name: List files in the current directory
+      #   run: ls -alh
 
       # - name: List files in client directory
       #   run: ls -al client
 
-      - name: List files in server directory
-        run: ls -alh ./server
+      # - name: List files in server directory
+      #   run: ls -alh ./server
 
-      - name: List files in server directory
-        run: less ./server/package.json
+      # - name: List files in server directory
+      #   run: less ./server/package.json
 
-      - name: Show content of docker-compose.yml
-        run: cat docker-compose.yml
+      # - name: Show content of docker-compose.yml
+      #   run: cat docker-compose.yml
 
       - name: Start Docker containers
         run: docker-compose up --build -d
@@ -86,6 +86,20 @@ jobs:
 
       # - name: Check Node API logs
       #   run: docker-compose logs node-api
+
+      - name: Wait for node-api to start
+        run: |
+          for i in {1..20}; do
+            if docker-compose ps | grep -q "node-api.*Up"; then
+              echo "node-api is up!"
+              break
+            fi
+            echo "Waiting for node-api to start..."
+            sleep 5
+          done
+
+      - name: Debug running containers 2
+        run: docker-compose ps
 
       - name: Run tests in Node.js API container
         run: |
