@@ -61,6 +61,9 @@ jobs:
         run: docker-compose up --build -d
         timeout-minutes: 10
 
+      - name: List installed node modules
+        run: docker-compose exec node-api sh -c "ls -l node_modules/.bin"
+
       - name: Debug running containers
         run: docker-compose ps
 
