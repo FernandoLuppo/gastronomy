@@ -59,28 +59,17 @@ jobs:
 
       - name: Start Docker containers
         run: docker-compose up --build -d
-
-      - name: Debug Secret
-        run: |
-          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}"
+        timeout-minutes: 10
 
       - name: Debug running containers
         run: docker-compose ps
 
+      - name: Check Node.js API container logs
+        run: docker-compose logs node-api
+
       - name: Run tests in Node.js API container
         run: |
           docker-compose exec node-api sh -c "yarn test"
-
-      - name: Wait for Next.js container to be ready
-        run: |
-          for i in {1..10}; do
-            if docker ps | grep nextjs; then
-              echo "Next.js container is ready."
-              break
-            fi
-            echo "Waiting for Next.js container..."
-            sleep 5
-          done
 
       - name: Debug running containers
         run: docker ps -a
