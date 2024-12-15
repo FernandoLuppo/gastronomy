@@ -62,7 +62,7 @@ jobs:
 
       - name: Debug Secret
         run: |
-          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL:0:5 }}****"
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" | cut -c 1-5
 
       - name: Debug running containers
         run: docker-compose ps
