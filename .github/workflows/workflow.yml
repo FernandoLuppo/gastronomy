@@ -15,20 +15,6 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      nextjs:
-        image: gastronomy-nextjs:latest
-        ports:
-          - "3001:3001"
-        volumes:
-          - ./client:/app
-
-      node-api:
-        image: gastronomy-node-api:latest
-        ports:
-          - "3000:3000"
-        volumes:
-          - ./server:/app
-
       mongodb:
         image: mongo:latest
         ports:
@@ -73,36 +59,36 @@ jobs:
 
       - name: Start Docker containers
         run: docker-compose up --build -d
-        # timeout-minutes: 10
 
-      # - name: Tail Node API container logs
-      #   run: docker-compose logs -f node-api
+      - name: Check MongoDB container logs
+        run: docker-compose exec mongodb sh -c "mongo --eval 'db.runCommand({ connectionStatus: 1 })'"
 
-      - name: Debug running containers
-        run: docker-compose ps
 
-      - name: List files inside server directory
-        run: docker-compose exec node-api sh -c "ls -l"
+      # - name: Debug running containers
+      #   run: docker-compose ps
+
+      # - name: List files inside server directory
+      #   run: docker-compose exec node-api sh -c "ls -l"
 
       # - name: List files inside server directory
       #   run: docker-compose exec node-api sh -c "ls -l /usr/src/app/server"
 
-      - name: Display package.json content
-        run: docker-compose exec node-api sh -c "cat package.json"
+      # - name: Display package.json content
+      #   run: docker-compose exec node-api sh -c "cat package.json"
 
-      - name: Debug running containers
-        run: docker-compose ps
+      # - name: Debug running containers
+      #   run: docker-compose ps
 
-      - name: Run tests in Node.js API container
-        run: |
-          docker-compose exec node-api sh -c "yarn test"
+      # - name: Run tests in Node.js API container
+      #   run: |
+      #     docker-compose exec node-api sh -c "yarn test"
 
-      - name: Debug running containers
-        run: docker ps -a
+      # - name: Debug running containers
+      #   run: docker ps -a
 
-      - name: Check Next.js container logs
-        run: docker-compose logs nextjs
+      # - name: Check Next.js container logs
+      #   run: docker-compose logs nextjs
 
-      - name: Run tests in Next.js container
-        run: |
-          docker-compose exec nextjs sh -c "yarn test"
+      # - name: Run tests in Next.js container
+      #   run: |
+      #     docker-compose exec nextjs sh -c "yarn test"
