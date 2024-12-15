@@ -62,6 +62,10 @@ jobs:
 
       - name: Debug running containers
         run: docker-compose ps
+        timeout-minutes: 15
+
+       name: Debug running containers
+        run: docker-compose ps
 
       - name: Check MongoDB container logs
         run: docker-compose exec mongodb mongo --eval "db.version()"
