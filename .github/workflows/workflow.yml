@@ -14,17 +14,79 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    # services:
-    #   mongodb:
-    #     image: mongo:latest
-    #     ports:
-    #       - 27020:27017
-    #     volumes:
-    #       - mongo-vol:/data/db
+    services:
+      nextjs:
+        build:
+          context: ./client
+          dockerfile: Dockerfile
+        image: gastronomy-nextjs:latest
+        command: yarn dev
+        ports:
+          - "3001:3001"
+        depends_on:
+          - node-api
+          - mongodb
+          - mongodb-test
+        networks:
+          - gastronomy-network
+        volumes:
+          - ./client:/app
+        env_file:
+          - .env
+
+      node-api:
+        build:
+          context: ./server
+          dockerfile: Dockerfile
+        image: gastronomy-node-api:latest
+        ports:
+          - "3000:3000"
+        env_file:
+          - .env
+        depends_on:
+          - mongodb
+          - mongodb-test
+        restart: unless-stopped
+        networks:
+          - gastronomy-network
+        command: yarn dev
+        volumes:
+          - ./server:/app
+
+      mongodb:
+        image: mongo
+        restart: always
+        env_file:
+          - .env
+        ports:
+          - "27018:27017"
+        volumes:
+          - mongo-vol:/data/db
+          - mongodb-config-vol:/data/configdb
+        networks:
+          - gastronomy-network
+
+      mongodb-test:
+        image: mongo
+        restart: always
+        env_file:
+          - .env
+        ports:
+          - "27019:27017"
+        volumes:
+          - mongo-vol-test:/data/db
+          - mongodb-config-test-vol:/data/configdb
+        networks:
+          - gastronomy-network
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
 
       - name: Create .env file
         run: |
