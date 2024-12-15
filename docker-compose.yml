@@ -40,6 +40,7 @@ services:
     depends_on:
       - mongodb
       - mongodb-test
+    restart: unless-stopped
     networks:
       - gastronomy-network
     command: yarn dev
