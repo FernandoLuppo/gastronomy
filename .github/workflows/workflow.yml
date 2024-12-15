@@ -22,8 +22,6 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: example
         volumes:
           - mongo-vol:/data/db
-        networks:
-          - gastronomy-network
 
       # MongoDB to tests
       mongodb-test:
@@ -35,8 +33,6 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: example
         volumes:
           - mongo-vol-test:/data/db
-        networks:
-          - gastronomy-network
 
     steps:
       - name: Check out code
@@ -61,13 +57,3 @@ jobs:
       - name: Shut down containers
         run: |
           docker-compose down
-
-    networks:
-      gastronomy-network:
-        driver: bridge
-
-    volumes:
-      mongo-vol: {}
-      mongodb-config-vol: {}
-      mongo-vol-test: {}
-      mongodb-config-test-vol: {}
