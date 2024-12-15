@@ -61,6 +61,9 @@ jobs:
         run: docker-compose up --build -d
         timeout-minutes: 10
 
+      - name: Tail Node API container logs
+        run: docker-compose logs -f node-api
+
       - name: Debug running containers
         run: docker-compose ps
 
@@ -70,11 +73,11 @@ jobs:
       # - name: List files inside server directory
       #   run: docker-compose exec node-api sh -c "ls -l /usr/src/app/server"
 
-      - name: Debug running containers
-        run: docker-compose ps
-
       - name: Display package.json content
         run: docker-compose exec node-api sh -c "cat package.json"
+
+      - name: Debug running containers
+        run: docker-compose ps
 
       - name: Run tests in Node.js API container
         run: |
