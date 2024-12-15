@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     services:
-      # MongoDB to dev
+      # MongoDB to development
       mongodb:
         image: mongo
         ports:
