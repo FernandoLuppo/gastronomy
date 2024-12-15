@@ -60,11 +60,11 @@ jobs:
       - name: Start Docker containers
         run: docker-compose up --build -d
 
+      - name: Debug running containers
+        run: docker-compose ps
+
       - name: Check MongoDB container logs
         run: docker-compose exec mongodb mongo --eval "db.version()"
-
-      # - name: Debug running containers
-      #   run: docker-compose ps
 
       # - name: List files inside server directory
       #   run: docker-compose exec node-api sh -c "ls -l"
