@@ -10,8 +10,7 @@ RUN yarn install --frozen-lockfile
 
 COPY . ./
 
-RUN yarn build
 
 EXPOSE 3001
 
-CMD ["yarn", "start"]
+CMD ["yarn", "dev"]
