@@ -57,14 +57,17 @@ jobs:
           EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
           EOF
 
-      - name: List files in the repository
-        run: ls -al
+      - name: List files in the current directory
+        run: ls -alh
 
       # - name: List files in client directory
       #   run: ls -al client
 
       - name: List files in server directory
-        run: cat ./service/package.json
+        run: ls -alh ./server
+
+      - name: List files in server directory
+        run: less ./server/package.json
 
       - name: Show content of docker-compose.yml
         run: cat docker-compose.yml
