@@ -43,7 +43,7 @@ services:
     restart: unless-stopped
     networks:
       - gastronomy-network
-    command: yarn start
+    command: yarn dev
     volumes:
       - ./server:/app
 

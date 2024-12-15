@@ -64,8 +64,11 @@ jobs:
       - name: Debug running containers
         run: docker-compose ps
 
-      - name: Check Node.js API container logs
-        run: docker-compose logs node-api
+      - name: List files inside server directory
+        run: docker-compose exec node-api sh -c "ls -l /usr/src/app/server"
+
+      - name: Display package.json content
+        run: docker-compose exec node-api sh -c "cat /usr/src/app/server/package.json"
 
       - name: Run tests in Node.js API container
         run: |
