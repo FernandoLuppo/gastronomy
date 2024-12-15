@@ -14,22 +14,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      mongodb:
-        image: mongo:latest
-        ports:
-          - 27020:27017
-        volumes:
-          - mongo-vol:/data/db
+    # services:
+    #   mongodb:
+    #     image: mongo:latest
+    #     ports:
+    #       - 27020:27017
+    #     volumes:
+    #       - mongo-vol:/data/db
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Install Docker Compose
-        run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
 
       - name: Create .env file
         run: |
@@ -59,10 +54,10 @@ jobs:
 
       - name: Start Docker containers
         run: docker-compose up --build -d
-        timeout-minutes: 10
+        # timeout-minutes: 10
 
-      - name: Tail Node API container logs
-        run: docker-compose logs -f node-api
+      # - name: Tail Node API container logs
+      #   run: docker-compose logs -f node-api
 
       - name: Debug running containers
         run: docker-compose ps
