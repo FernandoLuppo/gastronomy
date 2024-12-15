@@ -1,107 +1,73 @@
-name: Docker Build and Test
+name: CI Pipeline with Docker Compose
 
 on:
   push:
     branches:
       - main
-      - develop
   pull_request:
     branches:
       - main
-      - develop
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      # MongoDB to dev
+      mongodb:
+        image: mongo
+        ports:
+          - 27018:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: example
+        volumes:
+          - mongo-vol:/data/db
+        networks:
+          - gastronomy-network
+
+      # MongoDB to tests
+      mongodb-test:
+        image: mongo
+        ports:
+          - 27019:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: example
+        volumes:
+          - mongo-vol-test:/data/db
+        networks:
+          - gastronomy-network
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out code
+        uses: actions/checkout@v2
 
-      - name: Install Docker Compose
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Set up Docker Compose
         run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
+          sudo apt-get update
+          sudo apt-get install docker-compose
 
-      - name: Build the stack
-        run: docker-compose up -d
+      - name: Build and run containers using Docker Compose
+        run: |
+          docker-compose -f docker-compose.yml up -d
 
-      - name: Test
-        run: docker run --network container:webapp-frontend appropriate/curl -s --retry 10 --retry-connrefused http://localhost:5000/
+      - name: Run tests
+        run: |
+          docker-compose exec node-api sh -c "yarn test"
 
-    # services:
-    #   mongodb:
-    #     image: mongo:latest
-    #     ports:
-    #       - 27020:27017
-    #     volumes:
-    #       - mongo-vol:/data/db
+      - name: Shut down containers
+        run: |
+          docker-compose down
 
-    # steps:
-    #   - name: Checkout repository
-    #     uses: actions/checkout@v2
+    networks:
+      gastronomy-network:
+        driver: bridge
 
-    #   - name: Create .env file
-    #     run: |
-    #       cat <<EOF > .env
-    #       AMBIENT=${{ secrets.AMBIENT }}
-    #       NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}
-    #       NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-    #       PORT=${{ secrets.PORT }}
-    #       MONGO_DEV_URI=${{ secrets.MONGO_DEV_URI }}
-    #       ACCESS_TOKEN_MAX_AGE=${{ secrets.ACCESS_TOKEN_MAX_AGE }}
-    #       REFRESH_TOKEN_MAX_AGE=${{ secrets.REFRESH_TOKEN_MAX_AGE }}
-    #       EMAIL_TOKEN_MAX_AGE=${{ secrets.EMAIL_TOKEN_MAX_AGE }}
-    #       HTTP_ONLY=${{ secrets.HTTP_ONLY }}
-    #       EMAIL_ADMIN=${{ secrets.EMAIL_ADMIN }}
-    #       EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
-    #       GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-    #       GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-    #       GHUB_CLIENT_ID=${{ secrets.GHUB_CLIENT_ID }}
-    #       GHUB_CLIENT_SECRET=${{ secrets.GHUB_CLIENT_SECRET }}
-    #       SESSION_SECRET=${{ secrets.SESSION_SECRET }}
-    #       MONGO_TEST_URI=${{ secrets.MONGO_TEST_URI }}
-    #       TEST_TOKEN=${{ secrets.TEST_TOKEN }}
-    #       ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
-    #       REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
-    #       EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
-    #       EOF
-
-    #   - name: Start Docker containers
-    #     run: docker-compose up --build -d
-
-    #   - name: Debug running containers
-    #     run: docker-compose ps
-    #     timeout-minutes: 15
-
-    #   - name: Debug running containers
-    #     run: docker-compose ps
-    #     timeout-minutes: 15
-
-    #   - name: Check MongoDB container logs
-    #     run: docker-compose exec mongodb mongo --eval "db.version()"
-
-    # - name: List files inside server directory
-    #   run: docker-compose exec node-api sh -c "ls -l"
-
-    # - name: List files inside server directory
-    #   run: docker-compose exec node-api sh -c "ls -l /usr/src/app/server"
-
-    # - name: Display package.json content
-    #   run: docker-compose exec node-api sh -c "cat package.json"
-
-    # - name: Debug running containers
-    #   run: docker-compose ps
-
-    # - name: Run tests in Node.js API container
-    #   run: |
-    #     docker-compose exec node-api sh -c "yarn test"
-
-    # - name: Debug running containers
-    #   run: docker ps -a
-
-    # - name: Check Next.js container logs
-    #   run: docker-compose logs nextjs
-
-    # - name: Run tests in Next.js container
-    #   run: |
-    #     docker-compose exec nextjs sh -c "yarn test"
+    volumes:
+      mongo-vol: {}
+      mongodb-config-vol: {}
+      mongo-vol-test: {}
+      mongodb-config-test-vol: {}
