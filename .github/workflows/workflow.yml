@@ -65,7 +65,7 @@ jobs:
         run: docker-compose ps
 
       - name: List files inside server directory
-        run: docker-compose exec node-api sh -c "ls
+        run: docker-compose exec node-api sh -c "ls -l"
 
       # - name: List files inside server directory
       #   run: docker-compose exec node-api sh -c "ls -l /usr/src/app/server"
