@@ -6,7 +6,7 @@
     "test": "jest --runInBand",
     "build": "tsup src",
     "dev": "nodemon src/server.ts",
-    "start": "tsup src && node dist/server.js"
+    "start": "node dist/server.js"
   },
   "author": "",
   "license": "ISC",

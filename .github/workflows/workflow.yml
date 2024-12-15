@@ -70,6 +70,9 @@ jobs:
       # - name: List files inside server directory
       #   run: docker-compose exec node-api sh -c "ls -l /usr/src/app/server"
 
+      - name: Debug running containers
+        run: docker-compose ps
+
       - name: Display package.json content
         run: docker-compose exec node-api sh -c "cat package.json"
 
