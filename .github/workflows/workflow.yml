@@ -64,7 +64,7 @@ jobs:
         run: docker-compose ps
         timeout-minutes: 15
 
-       name: Debug running containers
+      - name: Debug running containers
         run: docker-compose ps
 
       - name: Check MongoDB container logs
