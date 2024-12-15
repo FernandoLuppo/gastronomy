@@ -16,9 +16,6 @@ jobs:
 
     services:
       nextjs:
-        build:
-          context: ./client
-          dockerfile: Dockerfile
         image: gastronomy-nextjs:latest
         ports:
           - "3001:3001"
@@ -26,9 +23,6 @@ jobs:
           - ./client:/app
 
       node-api:
-        build:
-          context: ./server
-          dockerfile: Dockerfile
         image: gastronomy-node-api:latest
         ports:
           - "3000:3000"
