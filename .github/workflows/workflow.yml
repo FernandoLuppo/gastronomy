@@ -18,10 +18,8 @@ jobs:
         ports:
           - 27018:27017
         env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: example
-        volumes:
-          - mongo-vol:/data/db
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
 
       # MongoDB to tests
       mongodb-test:
@@ -29,10 +27,8 @@ jobs:
         ports:
           - 27019:27017
         env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: example
-        volumes:
-          - mongo-vol-test:/data/db
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
 
     steps:
       - name: Check out code
@@ -45,6 +41,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install docker-compose
+
+      - name: Create .env file
+        run: |
+          echo "MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }}" >> .env
+          echo "MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}" >> .env
 
       - name: Build and run containers using Docker Compose
         run: |
