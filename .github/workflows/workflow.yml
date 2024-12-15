@@ -65,10 +65,13 @@ jobs:
         run: docker-compose ps
 
       - name: List files inside server directory
-        run: docker-compose exec node-api sh -c "ls -l /usr/src/app/server"
+        run: docker-compose exec node-api sh -c "ls
 
-      - name: Display package.json content
-        run: docker-compose exec node-api sh -c "cat /usr/src/app/server/package.json"
+      # - name: List files inside server directory
+      #   run: docker-compose exec node-api sh -c "ls -l /usr/src/app/server"
+
+      # - name: Display package.json content
+      #   run: docker-compose exec node-api sh -c "cat /usr/src/app/server/package.json"
 
       - name: Run tests in Node.js API container
         run: |
