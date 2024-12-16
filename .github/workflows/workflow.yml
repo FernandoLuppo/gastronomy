@@ -85,18 +85,22 @@ jobs:
       #     docker cp ./server/.env node-api:/app/.env
       #     docker start node-api
 
+      - name: Adjust permissions for .env file
+        run: |
+          chmod 644 $GITHUB_WORKSPACE/server/.env
+
+      - name: Verify .env file in container
+        run: |
+          docker run --rm -v $GITHUB_WORKSPACE/server:/app gastronomy-node-api:latest ls -la /app/.env
+
+      - name: Validate .env file
+        run: |
+          cat $GITHUB_WORKSPACE/server/.env
+
       - name: Start Node API container
         run: |
-          echo "Listando arquivos no diretório montado no container (pré execução):"
-          docker run --rm -v $GITHUB_WORKSPACE/server:/app gastronomy-node-api:latest ls -la /app
-
           docker run -d --name node-api --network gastronomy-network -p 3000:3000 \
-            -v $GITHUB_WORKSPACE/server:/app --env-file /app/.env gastronomy-node-api:latest
-
-      - name: Start Next.js container
-        run: |
-          docker run -d --name nextjs --network gastronomy-network -p 3001:3001 \
-            -v $GITHUB_WORKSPACE/client:/app --env-file /app/.env gastronomy-nextjs:latest
+            -v $GITHUB_WORKSPACE/server:/app --env-file $GITHUB_WORKSPACE/server/.env gastronomy-node-api:latest
 
       - name: Run tests
         run: |
