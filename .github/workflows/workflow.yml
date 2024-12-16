@@ -1,60 +1,64 @@
-name: CI Pipeline with Docker Compose
+name: CI Pipeline with Docker
 
 on:
   push:
     branches:
-      - main
+      - ["main", "develop"]
   pull_request:
     branches:
-      - main
+      - ["main", "develop"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      # MongoDB to development
-      mongodb:
-        image: mongo
-        ports:
-          - 27018:27017
-        env:
-          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
-          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
-
-      # MongoDB to tests
-      mongodb-test:
-        image: mongo
-        ports:
-          - 27019:27017
-        env:
-          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
-          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Set up Docker
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Set up Docker Compose
+      - name: Build Next.js image
         run: |
-          sudo apt-get update
-          sudo apt-get install docker-compose
+          docker build -t gastronomy-nextjs:latest -f client/Dockerfile ./client
 
-      - name: Create .env file
+      - name: Build Node API image
         run: |
-          echo "MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }}" >> .env
-          echo "MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}" >> .env
+          docker build -t gastronomy-node-api:latest -f server/Dockerfile ./server
 
-      - name: Build and run containers using Docker Compose
+      - name: Create Docker networks and volumes
         run: |
-          docker-compose -f docker-compose.yml up -d
+          docker network create gastronomy-network || true
+          docker volume create mongo-vol || true
+          docker volume create mongodb-config-vol || true
+          docker volume create mongo-vol-test || true
+          docker volume create mongodb-config-test-vol || true
+
+      - name: Start MongoDB containers
+        run: |
+          docker run -d --name mongodb --network gastronomy-network -p 27018:27017 \
+            -v mongo-vol:/data/db -v mongodb-config-vol:/data/configdb mongo
+
+          docker run -d --name mongodb-test --network gastronomy-network -p 27019:27017 \
+            -v mongo-vol-test:/data/db -v mongodb-config-test-vol:/data/configdb mongo
+
+      - name: Start Node API container
+        run: |
+          docker run -d --name node-api --network gastronomy-network -p 3000:3000 \
+            -v ./server:/app --env-file .env gastronomy-node-api:latest
+
+      - name: Start Next.js container
+        run: |
+          docker run -d --name nextjs --network gastronomy-network -p 3001:3001 \
+            -v ./client:/app --env-file .env gastronomy-nextjs:latest
 
       - name: Run tests
         run: |
-          docker-compose exec node-api sh -c "yarn test"
+          # Se necessário, rode comandos aqui para verificar o status da aplicação ou rodar testes
+          # Exemplo: docker exec nextjs yarn test
 
-      - name: Shut down containers
+      - name: Cleanup
         run: |
-          docker-compose down
+          docker stop nextjs node-api mongodb mongodb-test
+          docker rm nextjs node-api mongodb mongodb-test
