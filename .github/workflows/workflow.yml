@@ -104,8 +104,7 @@ jobs:
 
       - name: Run tests
         run: |
-          # Se necessário, rode comandos aqui para verificar o status da aplicação ou rodar testes
-          # Exemplo: docker exec nextjs yarn test
+          docker exec node-api yarn test
 
       - name: Cleanup
         run: |
