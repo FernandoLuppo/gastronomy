@@ -79,8 +79,17 @@ jobs:
           docker run -d --name mongodb-test --network gastronomy-network -p 27019:27017 \
             -v mongo-vol-test:/data/db -v mongodb-config-test-vol:/data/configdb mongo
 
+      # - name: Start Node API container
+      #   run: |
+      #     docker create --name node-api --network gastronomy-network -p 3000:3000 gastronomy-node-api:latest
+      #     docker cp ./server/.env node-api:/app/.env
+      #     docker start node-api
+
       - name: Start Node API container
         run: |
+          echo "Listando arquivos no diretório montado no container (pré execução):"
+          docker run --rm -v $GITHUB_WORKSPACE/server:/app gastronomy-node-api:latest ls -la /app
+
           docker run -d --name node-api --network gastronomy-network -p 3000:3000 \
             -v $GITHUB_WORKSPACE/server:/app --env-file /app/.env gastronomy-node-api:latest
 
