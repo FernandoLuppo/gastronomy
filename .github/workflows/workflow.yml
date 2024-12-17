@@ -63,15 +63,10 @@ jobs:
         run: |
           cat <<EOF > .env
           # Development
-          AMBIENT=development
-
-          # Website
-          NEXT_PUBLIC_URL=http://localhost:3000
-          NEXT_PUBLIC_API_URL=http://localhost:3000/api
+          AMBIENT=test
 
           # API
           PORT=3000
-          MONGO_DEV_URI=mongodb://localhost:27017/dev_db
           MONGO_TEST_URI=mongodb://localhost:27017/test_db
           ACCESS_TOKEN_MAX_AGE=3600
           REFRESH_TOKEN_MAX_AGE=7200
