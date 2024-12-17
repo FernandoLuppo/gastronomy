@@ -6,14 +6,16 @@ jest.setTimeout(30000)
 beforeAll(async () => {
   const { MONGO_TEST_URI } = process.env
 
-  if (!MONGO_TEST_URI) {
-    throw new Error(
-      'MONGO_TEST_URI is not defined in the environment variables.'
-    )
-  }
+  // if (!MONGO_TEST_URI) {
+  //   throw new Error(
+  //     'MONGO_TEST_URI is not defined in the environment variables.'
+  //   )
+  // }
 
   if (mongoose.connection.readyState !== 1) {
-    await mongoose.connect(MONGO_TEST_URI)
+    await mongoose.connect(
+      MONGO_TEST_URI || 'mongodb://localhost:27017/test_db'
+    )
   }
 })
 
