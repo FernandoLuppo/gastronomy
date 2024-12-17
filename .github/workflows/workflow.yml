@@ -93,10 +93,15 @@ jobs:
         run: |
           cat $GITHUB_WORKSPACE/server/.env
 
-      - name: Start Node API container
+      # - name: Start Node API container
+      #   run: |
+      #     docker run -d --name node-api --network gastronomy-network -p 3000:3000 \
+      #       -v $GITHUB_WORKSPACE/server:/app --env-file $GITHUB_WORKSPACE/server/.env gastronomy-node-api:latest
+
+      - name: Start container in interactive mode
         run: |
           docker run -d --name node-api --network gastronomy-network -p 3000:3000 \
-            -v $GITHUB_WORKSPACE/server:/app --env-file $GITHUB_WORKSPACE/server/.env gastronomy-node-api:latest
+            -v $GITHUB_WORKSPACE/server:/app --env-file $GITHUB_WORKSPACE/server/.env gastronomy-node-api:latest tail -f /dev/null
 
       - name: Inspect container logs
         run: docker logs node-api
