@@ -9,6 +9,6 @@ module.exports = {
     displayName: 'tests',
     setupFilesAfterEnv: ['<rootDir>/__test__/test-setup.ts'],
     testMatch: ['<rootDir>/__test__/**/*.test.ts'],
-    preset: '@shelf/jest-mongodb'
+    preset: '@shelf/jest-mongodb',
   }
 }

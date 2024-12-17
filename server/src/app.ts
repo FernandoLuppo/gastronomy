@@ -2,7 +2,6 @@ import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { userRouter, recoverPasswordRouter, socialLoginRouter } from './routes'
-import * as dotenv from 'dotenv'
 import { initDb } from './config/db'
 import {
   githubSocialLogin,
@@ -10,9 +9,9 @@ import {
 } from './config/socialLogin'
 import passport from 'passport'
 import session from 'express-session'
+import * as dotenv from 'dotenv'
 
 dotenv.config()
-
 const app = express()
 app.use(express.json())
 

@@ -1,10 +1,14 @@
 import mongoose from 'mongoose'
 import User from '../../src/models/User'
-
-jest.setTimeout(30000)
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 beforeAll(async () => {
-  const { MONGO_TEST_URI } = process.env
+  // const { MONGO_TEST_URI } = process.env
+  // console.log(
+  //   'mongoose.connection.readyState: ',
+  //   mongoose.connection.readyState
+  // )
 
   // if (!MONGO_TEST_URI) {
   //   throw new Error(
@@ -13,9 +17,7 @@ beforeAll(async () => {
   // }
 
   if (mongoose.connection.readyState !== 1) {
-    await mongoose.connect(
-      MONGO_TEST_URI || 'mongodb://localhost:27017/test_db'
-    )
+    await mongoose.connect('mongodb://localhost:27017/gastronomy_test')
   }
 })
 
