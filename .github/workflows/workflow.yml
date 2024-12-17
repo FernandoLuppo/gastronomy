@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js for Server
         uses: actions/setup-node@v3
         with:
-          node-version: 22
+          node-version: 18
           cache: "yarn"
 
       - name: Install dependencies for Server
@@ -39,7 +39,7 @@ jobs:
       - name: Setup Node.js for Client
         uses: actions/setup-node@v3
         with:
-          node-version: 22
+          node-version: 18
           cache: "yarn"
 
       - name: Install dependencies for Client
