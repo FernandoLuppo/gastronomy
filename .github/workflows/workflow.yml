@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js for Server
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install dependencies for Server
         working-directory: ./server
@@ -38,7 +38,7 @@ jobs:
       - name: Setup Node.js for Client
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install dependencies for Client
         working-directory: ./client
