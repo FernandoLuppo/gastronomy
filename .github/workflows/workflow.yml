@@ -1,119 +1,51 @@
-name: CI Pipeline with Docker
+name: CI Workflow
 
 on:
   push:
     branches:
       - main
-      - develop
+      - develops
   pull_request:
     branches:
       - main
-      - develop
+      - develops
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Setup Node.js for Server
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          cache: "yarn"
 
-      - name: Criar arquivo .env dentro de server
-        run: |
-          cat <<EOF > ./server/.env
-          AMBIENT="test"
+      - name: Install dependencies for Server
+        working-directory: ./server
+        run: yarn install
 
-          # Website
-          NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}
-          NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+      - name: Run tests for Server
+        working-directory: ./server
+        run: yarn test
 
-          # API
-          PORT=${{ secrets.PORT }}
-          MONGO_DEV_URI=${{ secrets.MONGO_DEV_URI }}
-          ACCESS_TOKEN_MAX_AGE=${{ secrets.ACCESS_TOKEN_MAX_AGE }}
-          REFRESH_TOKEN_MAX_AGE=${{ secrets.REFRESH_TOKEN_MAX_AGE }}
-          EMAIL_TOKEN_MAX_AGE=${{ secrets.EMAIL_TOKEN_MAX_AGE }}
-          HTTP_ONLY=${{ secrets.HTTP_ONLY }}
-          EMAIL_ADMIN=${{ secrets.EMAIL_ADMIN }}
-          EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
-          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GHUB_CLIENT_ID=${{ secrets.GHUB_CLIENT_ID }}
-          GHUB_CLIENT_SECRET=${{ secrets.GHUB_CLIENT_SECRET }}
-          SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+      - name: Build Server
+        working-directory: ./server
+        run: yarn build
 
-          # Test
-          MONGO_TEST_URI=${{ secrets.MONGO_TEST_URI }}
-          TEST_TOKEN=${{ secrets.TEST_TOKEN }}
+      - name: Setup Node.js for Client
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          cache: "yarn"
 
-          # API + Website
-          ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
-          REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
-          EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
-          EOF
+      - name: Install dependencies for Client
+        working-directory: ./client
+        run: yarn install
 
-      - name: Build Next.js image
-        run: |
-          docker build -t gastronomy-nextjs:latest -f client/Dockerfile ./client
-
-      - name: Build Node API image
-        run: |
-          docker build -t gastronomy-node-api:latest -f server/Dockerfile ./server
-
-      - name: Create Docker networks and volumes
-        run: |
-          docker network create gastronomy-network || true
-          docker volume create mongo-vol || true
-          docker volume create mongodb-config-vol || true
-          docker volume create mongo-vol-test || true
-          docker volume create mongodb-config-test-vol || true
-
-      - name: Start MongoDB containers
-        run: |
-          docker run -d --name mongodb --network gastronomy-network -p 27018:27017 \
-            -v mongo-vol:/data/db -v mongodb-config-vol:/data/configdb mongo
-
-          docker run -d --name mongodb-test --network gastronomy-network -p 27019:27017 \
-            -v mongo-vol-test:/data/db -v mongodb-config-test-vol:/data/configdb mongo
-
-      - name: Adjust permissions for .env file
-        run: |
-          chmod 644 $GITHUB_WORKSPACE/server/.env
-
-      # ---------------------------------
-
-      - name: Verify .env file in container
-        run: |
-          docker run --rm -v $GITHUB_WORKSPACE/server:/app gastronomy-node-api:latest ls -la /app/.env
-
-      - name: Validate .env file
-        run: |
-          cat $GITHUB_WORKSPACE/server/.env
-
-      # - name: Start Node API container
-      #   run: |
-      #     docker run -d --name node-api --network gastronomy-network -p 3000:3000 \
-      #       -v $GITHUB_WORKSPACE/server:/app --env-file $GITHUB_WORKSPACE/server/.env gastronomy-node-api:latest
-
-      - name: Start container in interactive mode
-        run: |
-          docker run -d --name node-api --network gastronomy-network -p 3000:3000 \
-            -v $GITHUB_WORKSPACE/server:/app --env-file $GITHUB_WORKSPACE/server/.env gastronomy-node-api:latest tail -f /dev/null
-
-      - name: Inspect container logs
-        run: docker logs node-api
-
-      # - name: Run tests with verbose output
-      #   run: docker exec node-api yarn test --verbose || docker logs node-api
-
-      - name: Run tests
-        run: |
-          docker exec node-api yarn test
-
-      - name: Cleanup
-        run: |
-          docker stop nextjs node-api mongodb mongodb-test
-          docker rm nextjs node-api mongodb mongodb-test
+      - name: Build Client
+        working-directory: ./client
+        run: yarn build
