@@ -41,6 +41,6 @@ app.use('/user', userRouter)
 app.use('/recover-password', recoverPasswordRouter)
 app.use('/social-login', socialLoginRouter)
 
-initDb()
+// initDb()
 
 export { app }
