@@ -23,6 +23,42 @@ jobs:
         with:
           node-version: 22
 
+      - name: Create .env file for Server
+        working-directory: ./server
+        run: |
+          cat <<EOF > .env
+          # Development
+          AMBIENT=development
+
+          # Website
+          NEXT_PUBLIC_URL=http://localhost:3000
+          NEXT_PUBLIC_API_URL=http://localhost:3000/api
+
+          # API
+          PORT=3000
+          MONGO_DEV_URI=mongodb://localhost:27017/dev_db
+          MONGO_TEST_URI=mongodb://localhost:27017/test_db
+          ACCESS_TOKEN_MAX_AGE=3600
+          REFRESH_TOKEN_MAX_AGE=7200
+          EMAIL_TOKEN_MAX_AGE=300
+          HTTP_ONLY=true
+          EMAIL_ADMIN=admin@example.com
+          EMAIL_PASSWORD=adminpassword
+          GOOGLE_CLIENT_ID=dummy-google-client-id
+          GOOGLE_CLIENT_SECRET=dummy-google-client-secret
+          GHUB_CLIENT_ID=dummy-github-client-id
+          GHUB_CLIENT_SECRET=dummy-github-client-secret
+          SESSION_SECRET=dummy-session-secret
+
+          # Test
+          TEST_TOKEN=dummy-test-token
+
+          # API + Website
+          ACCESS_TOKEN_SECRET=dummy-access-token-secret
+          REFRESH_TOKEN_SECRET=dummy-refresh-token-secret
+          EMAIL_TOKEN_SECRET=dummy-email-token-secret
+          EOF
+
       - name: Install dependencies for Server
         working-directory: ./server
         run: yarn install
