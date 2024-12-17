@@ -7,7 +7,7 @@ import { securityCodeGenerator } from '../../../../../../src/utils/helpers/secur
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-jest.mock('../../../../../../src/models/user/User')
+jest.mock('../../../../../../src/models/User')
 jest.mock('../../../../../../src/utils/helpers/securityCodeGenerator')
 jest.mock('../../../../../../src/services/token')
 jest.mock('../../../../../../src/services/email')

@@ -9,7 +9,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 jest.mock('../../../../../src/services/user/encryptPassword')
-jest.mock('../../../../../src/models/user/User')
+jest.mock('../../../../../src/models/User')
 
 describe('userService', () => {
   let data: any
