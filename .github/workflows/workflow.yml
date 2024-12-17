@@ -98,11 +98,8 @@ jobs:
           docker run -d --name node-api --network gastronomy-network -p 3000:3000 \
             -v $GITHUB_WORKSPACE/server:/app --env-file $GITHUB_WORKSPACE/server/.env gastronomy-node-api:latest
 
-      - name: Check installed dependencies
-        run: docker exec node-api yarn install --check-files
-
-      - name: Inspect container state
-        run: docker exec node-api ls -la /app
+      - name: Inspect container logs
+        run: docker logs node-api
 
       # - name: Run tests with verbose output
       #   run: docker exec node-api yarn test --verbose || docker logs node-api
