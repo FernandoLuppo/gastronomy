@@ -34,40 +34,30 @@ jobs:
         with:
           node-version: 22
 
-      - name: Create .env file for Server
-        working-directory: ./server
+      - name: Create .env file
         run: |
           cat <<EOF > .env
-          # Development
-          AMBIENT=development
-
-          # Website
-          NEXT_PUBLIC_URL=http://localhost:3000
-          NEXT_PUBLIC_API_URL=http://localhost:3000/api
-
-          # API
-          PORT=3000
-          MONGO_DEV_URI=mongodb://localhost:27017/dev_db
-          MONGO_TEST_URI=mongodb://localhost:27017/test_db
-          ACCESS_TOKEN_MAX_AGE=3600
-          REFRESH_TOKEN_MAX_AGE=7200
-          EMAIL_TOKEN_MAX_AGE=300
-          HTTP_ONLY=true
-          EMAIL_ADMIN=admin@example.com
-          EMAIL_PASSWORD=adminpassword
-          GOOGLE_CLIENT_ID=dummy-google-client-id
-          GOOGLE_CLIENT_SECRET=dummy-google-client-secret
-          GHUB_CLIENT_ID=dummy-github-client-id
-          GHUB_CLIENT_SECRET=dummy-github-client-secret
-          SESSION_SECRET=dummy-session-secret
-
-          # Test
-          TEST_TOKEN=dummy-test-token
-
-          # API + Website
-          ACCESS_TOKEN_SECRET=dummy-access-token-secret
-          REFRESH_TOKEN_SECRET=dummy-refresh-token-secret
-          EMAIL_TOKEN_SECRET=dummy-email-token-secret
+          AMBIENT=${{ secrets.AMBIENT }}
+          NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}
+          NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+          PORT=${{ secrets.PORT }}
+          MONGO_DEV_URI=${{ secrets.MONGO_DEV_URI }}
+          ACCESS_TOKEN_MAX_AGE=${{ secrets.ACCESS_TOKEN_MAX_AGE }}
+          REFRESH_TOKEN_MAX_AGE=${{ secrets.REFRESH_TOKEN_MAX_AGE }}
+          EMAIL_TOKEN_MAX_AGE=${{ secrets.EMAIL_TOKEN_MAX_AGE }}
+          HTTP_ONLY=${{ secrets.HTTP_ONLY }}
+          EMAIL_ADMIN=${{ secrets.EMAIL_ADMIN }}
+          EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GHUB_CLIENT_ID=${{ secrets.GHUB_CLIENT_ID }}
+          GHUB_CLIENT_SECRET=${{ secrets.GHUB_CLIENT_SECRET }}
+          SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+          MONGO_TEST_URI=${{ secrets.MONGO_TEST_URI }}
+          TEST_TOKEN=${{ secrets.TEST_TOKEN }}
+          ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
+          REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
+          EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
           EOF
 
       - name: Install dependencies for Server
