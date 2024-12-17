@@ -102,6 +102,9 @@ jobs:
           docker run -d --name node-api --network gastronomy-network -p 3000:3000 \
             -v $GITHUB_WORKSPACE/server:/app --env-file $GITHUB_WORKSPACE/server/.env gastronomy-node-api:latest
 
+      - name: Check running containers
+        run: docker ps -a
+
       - name: Run tests
         run: |
           docker exec node-api yarn test
