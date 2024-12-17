@@ -35,6 +35,7 @@ jobs:
           node-version: 22
 
       - name: Create .env file
+        working-directory: ./server
         run: |
           cat <<EOF > .env
           AMBIENT=${{ secrets.AMBIENT }}
