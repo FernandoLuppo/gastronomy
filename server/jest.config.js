@@ -1,5 +1,4 @@
 const { resolve } = require('path')
-const { pathsToModuleNameMapper } = require('ts-jest')
 
 module.exports = {
   rootDir: resolve(__dirname),

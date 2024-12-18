@@ -1,4 +1,5 @@
-import { cookiesCalc } from '../../../../../../src/utils/helpers/cookiesCalc'
+import { expect } from '@jest/globals'
+import { cookiesCalc } from '../../../../../../src/utils/helpers'
 
 const daysTime = 86400000
 const minuteTime = 60000
