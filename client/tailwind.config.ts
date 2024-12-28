@@ -38,7 +38,8 @@ const config: Config = {
         primary: "#7B1D20"
       },
       fontFamily: {
-        "la-belle-aurore": ["var(--font-la-belle-aurore)", "cursive"]
+        "la-belle-aurore": ["var(--font-la-belle-aurore)", "cursive"],
+        "libre-baskerville": ["var(--font-libre-baskerville)", "serif"]
       },
       gradientColorStops: {
         primary: "#7B1D20",

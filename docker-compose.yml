@@ -12,7 +12,7 @@ services:
   nextjs:
     build:
       context: ./client
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     image: gastronomy-nextjs:latest
     command: yarn dev
     ports:
@@ -31,7 +31,7 @@ services:
   node-api:
     build:
       context: ./server
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     image: gastronomy-node-api:latest
     ports:
       - "3000:3000"

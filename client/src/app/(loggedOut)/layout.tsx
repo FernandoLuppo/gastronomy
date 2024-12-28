@@ -4,7 +4,7 @@ import { La_Belle_Aurore } from "next/font/google";
 import { ReactNode } from "react";
 import "../globals.css";
 import { ReduxProvider } from "@/shared/lib/provider";
-import { Header } from "@/shared/components";
+import { HeaderLoggedOut } from "@/shared/components";
 
 const laBelleAurore = La_Belle_Aurore({
   subsets: ["latin"],
@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body
         className={`${inter.className} ${laBelleAurore.variable} dark:bg-default-black bg-default-white dark:text-default-white text-default-black`}
       >
-        <Header />
+        <HeaderLoggedOut />
         <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>

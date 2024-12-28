@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { La_Belle_Aurore } from "next/font/google";
+import { La_Belle_Aurore, Libre_Baskerville } from "next/font/google";
 import { ReactNode } from "react";
 import "./globals.css";
 import { ReduxProvider } from "@/shared/lib/provider";
 
 const laBelleAurore = La_Belle_Aurore({
   subsets: ["latin"],
-  weight: "400", // Ajuste o peso se necessário
+  weight: "400",
   variable: "--font-la-belle-aurore"
+});
+
+const libreBaskerville = Libre_Baskerville({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-libre-baskerville"
 });
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,7 +29,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <head></head>
       <body
-        className={`${inter.className} ${laBelleAurore.variable} dark:bg-default-black bg-default-white dark:text-default-white text-default-black`}
+        className={`${inter.className} ${laBelleAurore.variable} ${libreBaskerville.variable} dark:bg-default-black bg-default-white dark:text-default-white text-default-black`}
       >
         <ReduxProvider>{children}</ReduxProvider>
       </body>

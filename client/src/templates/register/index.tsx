@@ -1,4 +1,3 @@
-import { Header } from "@/shared/components";
 import { AuthCard } from "@/shared/components";
 import { Form } from "./components";
 

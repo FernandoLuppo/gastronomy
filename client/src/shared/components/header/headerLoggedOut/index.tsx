@@ -1,12 +1,9 @@
 import Image from "next/image";
 import * as motion from "framer-motion/client";
-import { Nav } from "./components";
 import { fadeIn } from "@/shared/css";
 import Link from "next/link";
 
-export const Header = () => {
-  const user = false;
-
+export const HeaderLoggedOut = () => {
   return (
     <header className="flex justify-center lg:justify-between items-center p-12 lg:bg-none lg:fixed lg:top-0 lg:z-10 bg-primary">
       <motion.div variants={fadeIn} initial="hidden" animate="show">
@@ -17,8 +14,6 @@ export const Header = () => {
           </h1>
         </Link>
       </motion.div>
-
-      {user && <Nav />}
     </header>
   );
 };

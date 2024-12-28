@@ -1,3 +1,7 @@
-export default function Home() {
-  return <div>Home</div>;
-}
+import HomeTemplate from "../templates/home";
+
+const Home = () => {
+  return <HomeTemplate />;
+};
+
+export default Home;

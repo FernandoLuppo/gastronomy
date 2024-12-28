@@ -7,7 +7,7 @@ const CheckEmail = () => {
       <section className="p-8 lg:p-10 mx-5 bg-card-light shadow-default rounded-lg max-w-[410px]">
         <div className="flex-center gap-2 mb-5">
           <Image
-            src="/icons/lock.svg"
+            src="/icons/others/lock.svg"
             alt="Lock icon"
             width={35}
             height={39}
