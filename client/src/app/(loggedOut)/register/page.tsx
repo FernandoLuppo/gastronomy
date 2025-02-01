@@ -1,5 +1,7 @@
 import RegisterTemplate from "../../../templates/register";
 
-export default function Register() {
+const Register = () => {
   return <RegisterTemplate />;
-}
+};
+
+export default Register;

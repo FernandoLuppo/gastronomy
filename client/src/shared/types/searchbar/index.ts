@@ -1,0 +1,3 @@
+interface ISearchBarIngredientValues {
+  ingredient: string;
+}

@@ -5,14 +5,18 @@ import { useRouter } from "next/navigation";
 import { handleForm, submitData } from "../../../../functions";
 import { Button, Input } from "@/shared/components";
 import Link from "next/link";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/shared/lib/store";
+import { linkHoverTapLight } from "@/shared/css";
+import * as motion from "framer-motion/client";
+import { redirect } from "next/navigation";
 
 export const UserInfos = () => {
   const route = useRouter();
+  const dispatch = useDispatch();
   const { errors, handleSubmit, isSubmitting, register, reset } = handleForm();
   const handleSubmitData = async (body: ILoginFormValues) =>
-    await submitData({ reset, route, body });
+    await submitData({ reset, route, body, redirect, dispatch });
   const { show } = useSelector((state: RootState) => state.passwordReducer);
 
   return (
@@ -38,18 +42,23 @@ export const UserInfos = () => {
         register={{ ...register("password") }}
         errors={errors.password}
       />
-      <div className="flex-center-between mb-5">
-        <Link href="/recover-password/check-email" className="underline ">
+      <motion.div className="mb-5" {...linkHoverTapLight}>
+        <Link href="/recover-password/check-email" className="underline">
           Forgot Password?
         </Link>
-      </div>
+      </motion.div>
 
       <Button text="Sign in" disabled={isSubmitting} />
-      <p>
+      <p className="flex gap-1">
         Don't have an account?{" "}
-        <Link href="/register" className="text-primary font-semibold">
-          Sign up
-        </Link>
+        <motion.div {...linkHoverTapLight}>
+          <Link
+            href="/register"
+            className="text-primary dark:text-primary-light font-semibold underline"
+          >
+            Sign up
+          </Link>
+        </motion.div>
       </p>
     </form>
   );

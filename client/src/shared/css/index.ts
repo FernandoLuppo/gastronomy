@@ -20,6 +20,11 @@ export const linkHoverTap = {
   whileTap: { scale: 0.9 }
 };
 
+export const linkHoverTapLight = {
+  whileHover: { scale: 1.05 },
+  whileTap: { scale: 0.9 }
+};
+
 export const menu = {
   open: { opacity: 1, x: 0 },
   closed: { opacity: 0, x: "-100%" }

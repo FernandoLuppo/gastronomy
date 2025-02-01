@@ -1,37 +1,51 @@
 "use client";
 
-import { Nav } from "../components";
+import { Logo, MobileMenu, Nav } from "../components";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { fadeIn } from "@/shared/css";
-import Link from "next/link";
-import Image from "next/image";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import clsx from "clsx";
+import { IoMdMenu } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/shared/lib/store";
+import { setMobileMenu } from "@/shared/lib/features/mobile-slice";
 
 export const HeaderLoggedIn = () => {
-  const user = false;
-
   const { scrollY } = useScroll();
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const { mobileMenu } = useSelector(
+    (state: RootState) => state.mobileReducer.show
+  );
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const updateScreenSize = () => {
+      setIsLargeScreen(window.innerWidth > 1024);
+    };
+
+    updateScreenSize();
+    window.addEventListener("resize", updateScreenSize);
+
+    return () => window.removeEventListener("resize", updateScreenSize);
+  }, []);
 
   const backgroundColor = useTransform(
     scrollY,
     [0, 100],
     ["transparent", "#7b1d20"]
   );
+
   const headerStyles = useMemo(() => {
-    return {
-      backgroundColor: showMobileMenu ? "#7b1d20" : backgroundColor
-    };
-  }, [showMobileMenu, backgroundColor]);
+    if (!isLargeScreen) return { backgroundColor: "#7b1d20" };
+    return { backgroundColor: backgroundColor };
+  }, [isLargeScreen, backgroundColor]);
 
   return (
     <motion.header
       className={clsx(
-        "w-full flex justify-center lg:justify-between items-center p-12 lg:bg-none lg:fixed lg:top-0 lg:z-10 bg-primary",
+        "w-full flex justify-between items-center p-6 md:p-12 fixed top-0 z-10",
         {
-          "bg-none": !showMobileMenu,
-          lute: showMobileMenu
+          "bg-primary": !isLargeScreen || mobileMenu,
+          "bg-none": isLargeScreen && !mobileMenu
         }
       )}
       style={headerStyles}
@@ -40,16 +54,16 @@ export const HeaderLoggedIn = () => {
         duration: 0.3
       }}
     >
-      <motion.div variants={fadeIn} initial="hidden" animate="show">
-        <Link href="/" className="flex gap-2 items-end">
-          <Image alt="" src="/icons/logo.svg" width={50} height={50} />
-          <h1 className="text-default-white font-la-belle-aurore text-4xl">
-            LuppoTW
-          </h1>
-        </Link>
-      </motion.div>
+      <Logo />
 
       <Nav />
+      <IoMdMenu
+        size={30}
+        className="block lg:hidden cursor-pointer text-default-white"
+        onClick={() => dispatch(setMobileMenu(true))}
+      />
+
+      {mobileMenu && <MobileMenu />}
     </motion.header>
   );
 };

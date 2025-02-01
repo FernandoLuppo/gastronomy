@@ -4,6 +4,7 @@ import { La_Belle_Aurore, Libre_Baskerville } from "next/font/google";
 import { ReactNode } from "react";
 import "./globals.css";
 import { ReduxProvider } from "@/shared/lib/provider";
+import { ThemeProvider } from "next-themes";
 
 const laBelleAurore = La_Belle_Aurore({
   subsets: ["latin"],
@@ -26,12 +27,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head></head>
       <body
         className={`${inter.className} ${laBelleAurore.variable} ${libreBaskerville.variable} dark:bg-default-black bg-default-white dark:text-default-white text-default-black`}
       >
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          <ThemeProvider attribute="class">{children}</ThemeProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

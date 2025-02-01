@@ -5,7 +5,7 @@ interface IButtonsConstants {
   socialMedia: "google" | "github";
 }
 
-const buttonsConstants: IButtonsConstants[] = [
+const BUTTONS_CONSTANTS: IButtonsConstants[] = [
   {
     text: "Sign in with GitHub",
     src: "/icons/socialMedias/github.svg",
@@ -20,4 +20,4 @@ const buttonsConstants: IButtonsConstants[] = [
   }
 ];
 
-export { buttonsConstants };
+export { BUTTONS_CONSTANTS };

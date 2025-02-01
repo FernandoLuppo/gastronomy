@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 import "../globals.css";
 import { ReduxProvider } from "@/shared/lib/provider";
 import { HeaderLoggedOut } from "@/shared/components";
+import { ThemeProvider } from "next-themes";
 
 const laBelleAurore = La_Belle_Aurore({
   subsets: ["latin"],
@@ -27,7 +28,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className={`${inter.className} ${laBelleAurore.variable} dark:bg-default-black bg-default-white dark:text-default-white text-default-black`}
       >
         <HeaderLoggedOut />
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          <ThemeProvider attribute="class">{children}</ThemeProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

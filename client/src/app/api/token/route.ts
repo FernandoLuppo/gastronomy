@@ -6,15 +6,8 @@ const chosenTokenSecret = ({
 }: {
   tokenName: "accessToken" | "refreshToken" | "emailToken";
 }) => {
-  console.log({ tokenName });
-
   const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, EMAIL_TOKEN_SECRET } =
     process.env;
-  console.log({
-    ACCESS_TOKEN_SECRET,
-    REFRESH_TOKEN_SECRET,
-    EMAIL_TOKEN_SECRET
-  });
 
   const tokens = {
     accessToken: ACCESS_TOKEN_SECRET,
@@ -32,7 +25,6 @@ export async function GET(req: NextRequest) {
 
     const token = JSON.parse(reqToken);
     const tokenSecret = chosenTokenSecret({ tokenName: token.name });
-    console.log({ tokenSecret });
     if (!tokenSecret) throw new Error("Token name is wrong");
 
     const decodedToken = verify(token.value, tokenSecret) as {
@@ -40,9 +32,9 @@ export async function GET(req: NextRequest) {
       content: any;
     };
 
-    console.log(decodedToken);
+    delete decodedToken.content.password;
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, token: decodedToken.content });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ success: false, error });

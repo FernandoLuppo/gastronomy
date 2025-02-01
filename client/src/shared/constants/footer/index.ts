@@ -1,4 +1,4 @@
-export const FOOTER_LINKS = {
+const FOOTER_LINKS = {
   quickLinks: [
     { title: "Diet", link: "/diet" },
     { title: "Health", link: "/health" },
@@ -23,3 +23,5 @@ export const FOOTER_LINKS = {
     }
   ]
 };
+
+export { FOOTER_LINKS };

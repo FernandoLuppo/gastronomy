@@ -33,15 +33,15 @@ export const useApi = async ({
     if (!data.success) {
       throw new Error(data.error, {
         cause: {
-          status: response.status,
-          message: data?.error || "Server Unknown Error"
+          status: response.status || "500",
+          message: data?.error?.message || "Server Unknown Error"
         }
       });
     }
 
     return data;
   } catch (error) {
-    handleError(error);
+    handleError(error as any);
     throw error;
   }
 };

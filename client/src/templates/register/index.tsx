@@ -6,7 +6,6 @@ const Register = () => {
     <>
       <main className="flex-center-between p-10 lg:p-0">
         <AuthCard />
-
         <Form />
       </main>
     </>

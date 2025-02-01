@@ -2,11 +2,10 @@
 
 import { IRegisterFormValues } from "@/shared/types";
 import { useRouter } from "next/navigation";
-
 import { Button, Input } from "@/shared/components";
 import Link from "next/link";
 import * as motion from "framer-motion/client";
-import { fadeInUp } from "@/shared/css";
+import { fadeInUp, linkHoverTapLight } from "@/shared/css";
 import { handleForm, submitData } from "../../functions";
 import { useSelector } from "react-redux";
 import { RootState } from "@/shared/lib/store";
@@ -73,11 +72,16 @@ export const Form = () => {
           <div className="mt-5">
             <Button type="submit" text="Sign up" disabled={isSubmitting} />
           </div>
-          <p>
+          <p className="flex gap-1">
             Already have an account?{" "}
-            <Link href="/login" className="text-primary font-semibold">
-              Sign in
-            </Link>
+            <motion.div {...linkHoverTapLight}>
+              <Link
+                href="/login"
+                className="text-primary dark:text-primary-light font-semibold underline"
+              >
+                Sign in
+              </Link>
+            </motion.div>
           </p>
         </form>
       </motion.div>

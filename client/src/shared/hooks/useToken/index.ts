@@ -1,5 +1,4 @@
 import cookies from "js-cookie";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { RedirectType } from "next/navigation";
 
 interface IUseToken {
@@ -13,7 +12,7 @@ interface IValid {
 
 const useToken = {
   get: async ({ tokenName }: IUseToken) => {
-    const token = cookies.get(tokenName);
+    const token = await cookies.get(tokenName);
     if (!token) return { success: false, error: "Token is missing" };
     return { success: true, token };
   },
@@ -37,7 +36,7 @@ const useToken = {
       if (!data || !data.success)
         throw new Error("Error during token validation!");
 
-      return;
+      return data;
     } catch (error) {
       console.log(error);
       return redirect("/login");

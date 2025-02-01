@@ -5,7 +5,8 @@ import {
   checkEmailSchema,
   registerSchema,
   updateUserInfosSchema,
-  newPasswordSchema
+  newPasswordSchema,
+  searchBarIngredientsSchema
 } from '../../schemas'
 import { STATUS_CODE } from '../../../constants/HTTP'
 
@@ -95,6 +96,23 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
+      console.log(error)
+      return res
+        .status(STATUS_CODE.UNAUTHORIZED)
+        .send({ error, success: false })
+    }
+  },
+
+  searchIngredient: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await searchBarIngredientsSchema.validate(req.body, {
+        abortEarly: false
+      })
+      return next()
+    } catch (error) {
+      console.log('test')
+      console.log(' ')
+
       console.log(error)
       return res
         .status(STATUS_CODE.UNAUTHORIZED)

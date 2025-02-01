@@ -9,6 +9,7 @@ const httpOnly = HTTP_ONLY === 'true' ? true : false
 const recoverPasswordController = {
   checkEmail: async (req: Request, res: Response) => {
     try {
+      console.log('test')
       const { success, emailToken, securityCode, error } =
         await recoverPassword.checkEmailService({ email: req.body.email })
 

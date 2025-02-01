@@ -19,7 +19,7 @@ spec:
             - containerPort: 27017
           volumeMounts:
             - name: mongo-data
-              mountPath: /data/mongodb/db
+              mountPath: /data/db
           envFrom:
             - secretRef:
                 name: gastronomy-secrets

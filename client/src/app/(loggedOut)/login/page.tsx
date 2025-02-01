@@ -1,5 +1,7 @@
 import LoginTemplate from "../../../templates/login";
 
-export default function Login() {
+const Login = () => {
   return <LoginTemplate />;
-}
+};
+
+export default Login;

@@ -67,11 +67,16 @@ const newPasswordSchema = baseUserSchema.pick(["password"]).shape({
     .oneOf([yup.ref("password")], "Passwords must match.")
 });
 
+const searchBarIngredientsSchema = yup.object().shape({
+  ingredient: yup.string().required("An ingredient is required.")
+});
+
 export {
   registerSchema,
   loginSchema,
   updateUserInfosSchema,
   checkEmailSchema,
   checkSecurityCodeSchema,
-  newPasswordSchema
+  newPasswordSchema,
+  searchBarIngredientsSchema
 };
