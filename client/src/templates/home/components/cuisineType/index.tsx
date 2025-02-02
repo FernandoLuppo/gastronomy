@@ -28,7 +28,7 @@ export const CuisineType = () => {
         <div className="flex justify-between items-center h-[500px] md:h-[450px]">
           <Carrousel>
             {RECIPES_HOME.cosineType.map(item => {
-              return <CarrouselCard item={item} />;
+              return <CarrouselCard item={item} key={item.name} />;
             })}
           </Carrousel>
         </div>

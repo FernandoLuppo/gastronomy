@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 import "./globals.css";
 import { ReduxProvider } from "@/shared/lib/provider";
 import { ThemeProvider } from "next-themes";
+import UseLoadUser from "@/shared/hooks/useUser";
 
 const laBelleAurore = La_Belle_Aurore({
   subsets: ["latin"],
@@ -33,7 +34,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className={`${inter.className} ${laBelleAurore.variable} ${libreBaskerville.variable} dark:bg-default-black bg-default-white dark:text-default-white text-default-black`}
       >
         <ReduxProvider>
-          <ThemeProvider attribute="class">{children}</ThemeProvider>
+          <ThemeProvider attribute="class">
+            <UseLoadUser />
+            {children}
+          </ThemeProvider>
         </ReduxProvider>
       </body>
     </html>

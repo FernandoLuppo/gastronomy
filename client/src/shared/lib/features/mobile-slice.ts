@@ -1,13 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialState = {
+  show: {
+    mobileMenu: false
+  }
+};
+
 export const mobileSlice = createSlice({
   name: "mobile",
-  initialState: {
-    show: {
-      mobileMenu:
-        typeof window !== "undefined" && window.innerWidth > 1024 ? false : true
-    }
-  },
+  initialState,
   reducers: {
     toggleMobileMenu: state => {
       state.show.mobileMenu = !state.show.mobileMenu;

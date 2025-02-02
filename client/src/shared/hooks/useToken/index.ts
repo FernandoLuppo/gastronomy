@@ -20,28 +20,28 @@ const useToken = {
   clear: async ({ tokenName }: IUseToken) => {
     cookies.remove(tokenName);
     return { success: true };
-  },
-
-  valid: async ({ token, redirect }: IValid) => {
-    try {
-      if (!token) throw new Error("Token is missing");
-
-      const response = await fetch(
-        `http://localhost:3001/api/token?token=${JSON.stringify(token)}`,
-        {
-          method: "GET"
-        }
-      );
-      const data = await response.json();
-      if (!data || !data.success)
-        throw new Error("Error during token validation!");
-
-      return data;
-    } catch (error) {
-      console.log(error);
-      return redirect("/login");
-    }
   }
+
+  // valid: async ({ token, redirect }: IValid) => {
+  //   try {
+  //     if (!token) throw new Error("Token is missing");
+
+  //     const response = await fetch(
+  //       `http://localhost:3001/api/token?token=${JSON.stringify(token)}`,
+  //       {
+  //         method: "GET"
+  //       }
+  //     );
+  //     const data = await response.json();
+  //     if (!data || !data.success)
+  //       throw new Error("Error during token validation!");
+
+  //     return data;
+  //   } catch (error) {
+  //     console.log(error);
+  //     return redirect("/login");
+  //   }
+  // }
 };
 
 export { useToken };

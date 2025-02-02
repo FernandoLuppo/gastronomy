@@ -1,41 +1,46 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = () => {
-  if (typeof window === "undefined") return;
-  const userFromLocalStorage = localStorage.getItem("LuppoTw-User");
-  if (userFromLocalStorage) return JSON.parse(userFromLocalStorage);
+interface UserState {
+  _id: string;
+  name: string;
+  email: string;
+  logged: boolean;
+}
 
-  return {
-    _id: "",
-    name: "",
-    email: "",
-    logged: false
-  };
+const initialState: UserState = {
+  _id: "",
+  name: "",
+  email: "",
+  logged: false
 };
 
 export const userSlice = createSlice({
   name: "user",
-  initialState: initialState(),
+  initialState,
   reducers: {
-    setUser: (state, action) => {
+    setUser: (state, action: PayloadAction<Omit<UserState, "logged">>) => {
       const { _id, name, email } = action.payload;
       state._id = _id;
       state.name = name;
       state.email = email;
       state.logged = true;
-      localStorage.setItem(
-        "LuppoTw-User",
-        JSON.stringify({ _id, name, email, logged: true })
-      );
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "LuppoTw-User",
+          JSON.stringify({ _id, name, email, logged: true })
+        );
+      }
     },
-    logout: () => {
-      localStorage.removeItem("LuppoTw-User");
-      return {
-        _id: "",
-        name: "",
-        email: "",
-        logged: false
-      };
+    logout: state => {
+      state._id = "";
+      state.name = "";
+      state.email = "";
+      state.logged = false;
+
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("LuppoTw-User");
+      }
     }
   }
 });
