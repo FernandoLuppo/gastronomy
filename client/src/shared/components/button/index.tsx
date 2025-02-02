@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { fadeIn, fadeInUp, linkHoverTap } from "../../css";
+import { linkHoverTap } from "../../css";
 import clsx from "clsx";
 import * as motion from "framer-motion/client";
 
@@ -17,7 +17,7 @@ export const Button = ({ text, src, alt, socialMedia, onClick }: IButton) => {
       className={clsx(
         "h-12 w-full shadow-default flex-center gap-2 rounded-lg font-semibold",
         {
-          "bg-[#252525] text-default-white": socialMedia === "github",
+          "bg-[#1A1A1A] text-default-white": socialMedia === "github",
           "bg-[#FFFFFF] text-default-black px-5 py-4 border-[#DFDFDF] border-[1px]":
             socialMedia === "google",
           "bg-primary text-default-white border-none": !socialMedia
@@ -32,7 +32,7 @@ export const Button = ({ text, src, alt, socialMedia, onClick }: IButton) => {
           alt={alt}
           width={20}
           height={20}
-          objectFit="contain"
+          style={{ objectFit: "contain" }}
           loading="lazy"
         />
       )}

@@ -1,4 +1,3 @@
-import { Header } from "@/shared/components";
 import { AuthCard } from "@/shared/components";
 import { Form } from "./components";
 
@@ -7,7 +6,6 @@ const Register = () => {
     <>
       <main className="flex-center-between p-10 lg:p-0">
         <AuthCard />
-
         <Form />
       </main>
     </>

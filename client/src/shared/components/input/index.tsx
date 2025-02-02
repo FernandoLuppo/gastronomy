@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { FieldError } from "react-hook-form";
 import { InputEye } from "./components/inputEye";
 
 interface IInput extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -20,7 +19,10 @@ export const Input = ({
 }: IInput) => {
   return (
     <div>
-      <label htmlFor={id} className="text-3xl">
+      <label
+        htmlFor={id}
+        className="text-3xl text-default-black dark:text-default-white"
+      >
         {label}
       </label>
       <div className="relative">
@@ -28,11 +30,14 @@ export const Input = ({
           id={id}
           {...other}
           {...register}
-          className={clsx(`w-full h-12 p-3 rounded-lg shadow-default`, {
-            "border-red-500": errors,
-            "border-gray-300": !errors,
-            "pr-12": other.type === "password"
-          })}
+          className={clsx(
+            "w-full h-12 p-3 rounded-lg shadow-default bg-card-light text-default-black",
+            {
+              "border-red-500": errors,
+              "border-gray-300": !errors,
+              "pr-12": other.type === "password"
+            }
+          )}
         />
         <InputEye passwordType={passwordType} />
       </div>

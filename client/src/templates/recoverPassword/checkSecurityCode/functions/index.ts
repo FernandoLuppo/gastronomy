@@ -33,7 +33,6 @@ const submitData = async ({
       body,
       token: securityCodeToken.token
     });
-    console.log("data: ", data);
     if (!data.success) throw new Error(data.error);
 
     return route.push("/recover-password/new-password");

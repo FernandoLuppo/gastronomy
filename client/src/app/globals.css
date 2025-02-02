@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    /* Your default theme */
+    --background: #f2f2f2;
+    --foreground: #252525;
+  }
+
+  [data-theme="dark"] {
+    --background: #252525;
+    --foreground: #f2f2f2;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -16,6 +29,70 @@
   @apply flex justify-center items-center;
 }
 
-.background-gradient {
-  background: linear-gradient(to bottom, #7b1d20 50%, #f2f2f2 50%);
+/* Carousel */
+.slick-slider {
+  padding: 0 3rem 0 3rem;
+}
+.slick-slider,
+.slick-slider div {
+  display: flex !important;
+}
+.slick-slider {
+  justify-content: center;
+}
+
+.slick-slide {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.slick-prev {
+  left: 0 !important;
+}
+.slick-next {
+  right: 20px !important;
+}
+
+/* ----------------------- */
+
+.slick-next::before,
+.slick-prev::before {
+  font-size: 40px !important;
+  color: #252525 !important;
+}
+.dark .slick-next::before,
+.dark .slick-prev::before {
+  font-size: 40px !important;
+  color: #f2f2f2 !important;
+}
+
+.bg-primary .slick-next::before,
+.bg-primary .slick-prev::before {
+  color: #ff7b7f !important;
+}
+
+/* ------------------------------ */
+
+.slick-dots {
+  bottom: 0 !important;
+  width: fit-content !important;
+  justify-self: anchor-center;
+}
+.slick-dots li button::before {
+  font-size: 16px !important;
+  color: #252525 !important;
+}
+.dark .slick-dots li button::before {
+  font-size: 16px !important;
+  color: #f2f2f2 !important;
+}
+.bg-primary .slick-dots li button::before {
+  color: #ff7b7f !important;
+}
+
+@media only screen and (max-width: 400px) {
+  .slick-slider {
+    padding: 0 !important;
+  }
 }

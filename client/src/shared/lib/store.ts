@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import themeReducer from "./features/theme-slice";
 import passwordReducer from "./features/showPassword-slice";
+import mobileReducer from "./features/mobile-slice";
+import userReducer from "./features/user-slice";
 
 export const store = configureStore({
   reducer: {
-    themeReducer,
-    passwordReducer
+    passwordReducer,
+    mobileReducer,
+    userReducer
   }
 });
 

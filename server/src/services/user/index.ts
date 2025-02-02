@@ -63,15 +63,16 @@ export const userService = {
       })
       if (!success)
         return { error: 'Email or password incorrect!', success: false }
-
-      delete user.password
     }
 
+    delete user?.password
+    console.log({ user })
     const userTokens = await tokenService.createUserToken({
       _id: user._id.toString(),
       content: user
     })
     if (!userTokens.success) return { error: userTokens.error, success: false }
+    console.log({ userTokens })
 
     return { userTokens: { tokens: userTokens.tokens }, success: true }
   },
