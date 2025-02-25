@@ -5,7 +5,6 @@ import {
   userRouter,
   recoverPasswordRouter,
   socialLoginRouter,
-  router,
   recipesRouter
 } from './routes'
 import { initDb } from './config/db'
@@ -48,7 +47,6 @@ app.use('/user', userRouter)
 app.use('/recover-password', recoverPasswordRouter)
 app.use('/social-login', socialLoginRouter)
 app.use('/recipes', recipesRouter)
-app.use('/', router)
 
 initDb()
 

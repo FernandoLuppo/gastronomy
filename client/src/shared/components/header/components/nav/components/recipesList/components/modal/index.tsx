@@ -2,10 +2,18 @@ import { linkHoverTap } from "@/shared/css";
 import * as motion from "framer-motion/client";
 import Link from "next/link";
 import { RECIPES_HEADER_NAV } from "@/shared/constants";
+import { PopupModal } from "@/shared/components/popupModal";
 
 export const RecipesModal = () => {
+  const positions = {
+    top: 6,
+    bottom: "auto",
+    left: "auto",
+    right: 0
+  };
+
   return (
-    <ul className="flex flex-col gap-3 w-max absolute top-6 right-0 p-4 rounded-lg shadow-default border-2 border-gray-300 bg-default-white text-default-black">
+    <PopupModal positions={positions}>
       {RECIPES_HEADER_NAV.map(item => {
         return (
           <motion.li {...linkHoverTap}>
@@ -13,6 +21,6 @@ export const RecipesModal = () => {
           </motion.li>
         );
       })}
-    </ul>
+    </PopupModal>
   );
 };

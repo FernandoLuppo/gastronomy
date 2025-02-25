@@ -2,6 +2,16 @@ import { MOCK_RECIPES } from '../../constants'
 import Recipes from '../../models/Recipes'
 import axios from 'axios'
 
+interface IRecipe {
+  recipe: {
+    uri: string
+    label: string
+    image: string
+    mealType: string
+    cuisineType: string
+  }
+}
+
 export const recipesService = {
   getRecommendRecipes: async () => {
     const recipesList = await recommendedRecipes()
@@ -26,6 +36,16 @@ export const recipesService = {
     const response = await axios.get(url)
 
     return { success: true, recipes: response.data }
+  },
+
+  list: async ({ recipe, dish }: { recipe: string; dish: string }) => {
+    const { EDMAM_FULL_URL } = process.env
+    const response = await axios.get(`${EDMAM_FULL_URL}&${recipe}Type=${dish}`)
+
+    const recipeList = response.data.hits.map((item: IRecipe) =>
+      dataTemplate(item)
+    )
+    return { success: true, recipeList }
   }
 }
 
@@ -65,7 +85,7 @@ const getMockRecommendedRecipes = async ({
     currentList.map(async item => {
       try {
         const response = await axios.get(item)
-        const currentData = buildMockData(response.data)
+        const currentData = dataTemplate(response.data)
 
         return currentData
       } catch (error) {
@@ -77,15 +97,15 @@ const getMockRecommendedRecipes = async ({
   return processedList
 }
 
-const buildMockData = (data: any) => {
-  const oldData = data.recipe
+const dataTemplate = (data: IRecipe) => {
+  const recipe = data.recipe
 
   const newData = {
-    _id: getIdFromRecipes(oldData.uri),
-    label: oldData.label,
-    image: oldData.image,
-    mealType: oldData.mealType,
-    cuisineType: oldData.cuisineType
+    _id: getIdFromRecipes(recipe.uri),
+    label: recipe.label,
+    image: recipe.image,
+    mealType: recipe.mealType,
+    cuisineType: recipe.cuisineType
   }
   return newData
 }

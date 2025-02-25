@@ -37,12 +37,6 @@ const submitData = async ({
     if (!data.success) throw new Error(data.error);
     const getToken = await useToken.get({ tokenName: "accessToken" });
     if (getToken) {
-      // const user = await useToken.valid({
-      //   token: { name: "accessToken", value: getToken.token as string },
-      //   redirect
-      // });
-
-      // dispatch(setUser(user.token));
       return route.push("/");
     }
 

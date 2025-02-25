@@ -4,3 +4,5 @@ export * from "./input";
 export * from "./authCard";
 export * from "./footer";
 export * from "./carrousel";
+export * from "./recipeCard";
+export * from "./popupModal";

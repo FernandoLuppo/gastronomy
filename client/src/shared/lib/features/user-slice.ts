@@ -18,17 +18,17 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<Omit<UserState, "logged">>) => {
-      const { _id, name, email } = action.payload;
+    setUser: (state, action: PayloadAction<UserState>) => {
+      const { _id, name, email, logged } = action.payload;
       state._id = _id;
       state.name = name;
       state.email = email;
-      state.logged = true;
+      state.logged = logged;
 
       if (typeof window !== "undefined") {
         localStorage.setItem(
           "LuppoTw-User",
-          JSON.stringify({ _id, name, email, logged: true })
+          JSON.stringify({ _id, name, email, logged })
         );
       }
     },

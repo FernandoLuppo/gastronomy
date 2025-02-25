@@ -1,22 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { La_Belle_Aurore, Libre_Baskerville } from "next/font/google";
+import { La_Belle_Aurore } from "next/font/google";
 import { ReactNode } from "react";
-import "./globals.css";
+import "../../globals.css";
 import { ReduxProvider } from "@/shared/lib/provider";
+import { HeaderLoggedOut } from "@/shared/components";
 import { ThemeProvider } from "next-themes";
-import UseLoadUser from "@/shared/hooks/useUser";
 
 const laBelleAurore = La_Belle_Aurore({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-la-belle-aurore"
-});
-
-const libreBaskerville = Libre_Baskerville({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-libre-baskerville"
 });
 
 const inter = Inter({ subsets: ["latin"] });
@@ -28,16 +22,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head></head>
       <body
-        className={`${inter.className} ${laBelleAurore.variable} ${libreBaskerville.variable} dark:bg-default-black bg-default-white dark:text-default-white text-default-black`}
+        className={`${inter.className} ${laBelleAurore.variable} dark:bg-default-black bg-default-white dark:text-default-white text-default-black`}
       >
+        <HeaderLoggedOut />
         <ReduxProvider>
-          <ThemeProvider attribute="class">
-            <UseLoadUser />
-            {children}
-          </ThemeProvider>
+          <ThemeProvider attribute="class">{children}</ThemeProvider>
         </ReduxProvider>
       </body>
     </html>

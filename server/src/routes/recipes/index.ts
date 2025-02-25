@@ -4,10 +4,17 @@ import { routesAuthentication } from '../../../src/middlewares/authentications/r
 
 const recipesRouter = Router()
 
+recipesRouter.get(
+  '/home-content/recommended',
+  RecipesController.homeContentRecommended
+)
+
 recipesRouter.post(
   '/search',
   routesAuthentication.searchIngredient,
   RecipesController.search
 )
+
+recipesRouter.get('/recipe-list', RecipesController.list)
 
 export { recipesRouter }

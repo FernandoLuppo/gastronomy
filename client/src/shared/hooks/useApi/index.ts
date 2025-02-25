@@ -42,6 +42,5 @@ export const useApi = async ({
     return data;
   } catch (error) {
     handleError(error as any);
-    throw error;
   }
 };

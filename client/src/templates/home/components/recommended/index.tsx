@@ -1,30 +1,28 @@
-"use client";
-
-import { Carrousel } from "@/shared/components";
+import { Carrousel, RecipeCard } from "@/shared/components";
 import { useApi } from "@/shared/hooks";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/shared/css";
 import { IRecommendedRecipes } from "@/shared/types";
-import { CarrouselCard } from "./components";
 
-export const Recommended = () => {
-  const [recommendedRecipes, setRecommendedRecipes] = useState<
-    IRecommendedRecipes[] | []
-  >([]);
+export const Recommended = async () => {
+  // const [recommendedRecipes, setRecommendedRecipes] = useState<
+  //   IRecommendedRecipes[] | []
+  // >([]);
 
-  useEffect(() => {
-    const getRecommendedRecipes = async () => {
-      const data = await useApi({
-        method: "GET",
-        url: "/home-content"
-      });
+  const data = await useApi({
+    method: "GET",
+    url: "/recipes/home-content/recommended"
+  });
 
-      setRecommendedRecipes(data.list);
-    };
-    getRecommendedRecipes();
-  }, []);
+  // useEffect(() => {
+  //   const getRecommendedRecipes = async () => {
+
+  //     setRecommendedRecipes(data.list);
+  //   };
+  //   getRecommendedRecipes();
+  // }, []);
 
   return (
     <motion.section
@@ -46,22 +44,22 @@ export const Recommended = () => {
         />
       </div>
       <div>
-        {recommendedRecipes.length > 1 && (
+        {data?.list?.length > 1 && (
           <Carrousel>
-            {recommendedRecipes?.map(
-              ({ _id, cuisineType, image, label, mealType }, index) => {
+            {data?.list
+              ?.filter((item: any) => item != null)
+              .map(({ _id, cuisineType, image, label, mealType }: any) => {
                 return (
-                  <CarrouselCard
+                  <RecipeCard
+                    key={_id}
                     _id={_id || ""}
-                    cuisineType={cuisineType || [""]}
+                    cuisineType={cuisineType || ""}
                     image={image || ""}
                     label={label || ""}
-                    mealType={mealType || [""]}
-                    key={_id || index}
+                    mealType={mealType || ""}
                   />
                 );
-              }
-            )}
+              })}
           </Carrousel>
         )}
       </div>
