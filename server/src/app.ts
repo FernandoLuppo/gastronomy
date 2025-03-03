@@ -15,18 +15,14 @@ import {
 import passport from 'passport'
 import session from 'express-session'
 import * as dotenv from 'dotenv'
+import { corsConfig } from './config/cors'
 
 dotenv.config()
 const app = express()
 
 app.use(express.json())
 
-app.use(
-  cors({
-    origin: true,
-    credentials: true
-  })
-)
+app.use(cors(corsConfig))
 
 app.use(cookieParser())
 

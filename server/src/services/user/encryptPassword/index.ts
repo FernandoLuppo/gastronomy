@@ -1,3 +1,5 @@
+import { STATUS_CODE } from '@src/constants'
+import { CustomError } from '@src/utils/error'
 import bcryptjs from 'bcryptjs'
 
 export const encrypt = ({ password }: { password: string }) => {
@@ -15,7 +17,9 @@ export const decrypt = async ({
   comparePassword: string
 }) => {
   const matchPasswords = await bcryptjs.compare(password, comparePassword)
-  if (!matchPasswords) return { error: "Password don't match!", success: false }
-
-  return { success: true }
+  if (!matchPasswords)
+    throw new CustomError({
+      message: 'Password is wrong!',
+      statusCode: STATUS_CODE.INTERNAL_SERVER_ERROR
+    })
 }

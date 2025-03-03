@@ -7,10 +7,10 @@ const recipeThree = `${EDAMAM_API_URL}/98bffffbf45d274a5d5948c489f62aff${urlEnd}
 const recipeFour = `${EDAMAM_API_URL}/b20815eac65ee2fa5f848f56c16056dd${urlEnd}`
 const recipeFive = `${EDAMAM_API_URL}/8d3e4b9299664a1ca8e6f5bdb8532300${urlEnd}`
 
-export const MOCK_RECIPES = {
-  0: [recipeOne, recipeTwo, recipeThree, recipeFour, recipeFive],
-  1: [recipeOne, recipeTwo, recipeThree, recipeFour],
-  2: [recipeOne, recipeTwo, recipeThree],
-  3: [recipeOne, recipeTwo],
-  4: [recipeOne]
-}
+export const MOCK_RECIPES = [
+  recipeOne,
+  recipeTwo,
+  recipeThree,
+  recipeFour,
+  recipeFive
+]

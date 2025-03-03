@@ -6,6 +6,8 @@ import {
   saveToken,
   searchTokenSecretKey
 } from '../../utils/domain'
+import { CustomError } from '@src/utils/error'
+import { STATUS_CODE } from '@src/constants'
 
 const {
   ACCESS_TOKEN_SECRET,
@@ -19,9 +21,16 @@ const {
 export const tokenService = {
   createUserToken: async ({ _id, content }: IPayload) => {
     if (!ACCESS_TOKEN_SECRET || !REFRESH_TOKEN_SECRET)
-      return { error: 'Token secret is missing!', success: false }
+      throw new CustomError({
+        message: 'Token secret is missing!',
+        statusCode: STATUS_CODE.UNAUTHORIZED
+      })
 
-    if (!_id) return { error: '_id is missing!', success: false }
+    if (!_id)
+      throw new CustomError({
+        message: '_id is missing!',
+        statusCode: STATUS_CODE.BAD_REQUEST
+      })
 
     const accessToken = createToken({
       payload: { content, role: 'accessToken' },
@@ -49,7 +58,6 @@ export const tokenService = {
     await saveToken({ _id, refreshToken: newRefreshToken })
 
     return {
-      success: true,
       tokens: {
         accessToken: accessToken.token,
         refreshToken: refreshToken.token
@@ -59,9 +67,15 @@ export const tokenService = {
 
   createEmailToken: ({ _id, content = {} }: IPayload) => {
     if (!EMAIL_TOKEN_SECRET)
-      return { error: 'Token secret is missing!', success: false }
-
-    if (!_id) return { error: '_id is missing!', success: false }
+      throw new CustomError({
+        message: 'Token secret is missing!',
+        statusCode: STATUS_CODE.UNAUTHORIZED
+      })
+    if (!_id)
+      throw new CustomError({
+        message: '_id is missing!',
+        statusCode: STATUS_CODE.UNAUTHORIZED
+      })
 
     const emailToken = createToken({
       payload: { content, role: 'emailToken' },
@@ -69,24 +83,32 @@ export const tokenService = {
       expiresIn: `${EMAIL_TOKEN_MAX_AGE}m`,
       secret: EMAIL_TOKEN_SECRET
     })
-    if (!emailToken.success)
-      return { error: 'Error in email token creation.', success: false }
 
-    return { success: true, emailToken: emailToken.token }
+    return { emailToken: emailToken.token }
   },
 
   validateToken: ({ req, token, secret }: ITokenValidate) => {
-    if (!token) return { error: 'Token is missing', success: false }
+    if (!token)
+      throw new CustomError({
+        message: 'Token is missing!',
+        statusCode: STATUS_CODE.UNAUTHORIZED
+      })
 
     const secretKey = searchTokenSecretKey({ secret })
     if (!secretKey)
-      return { error: 'Token secret key is undefined!', success: false }
+      throw new CustomError({
+        message: 'Token secret key is undefined!',
+        statusCode: STATUS_CODE.UNAUTHORIZED
+      })
 
     const tokenWithoutBearer = token.replace('Bearer ', '')
     const decodedToken = verify(tokenWithoutBearer, secretKey) as {
       sub: string
       content: any
     }
+
+    console.log('validateToken.decodedToken ---> ', { decodedToken })
+
     req.authenticatedUser = {
       token: {
         sub: decodedToken.sub,
@@ -94,19 +116,24 @@ export const tokenService = {
       }
     }
 
-    return { success: true, decodedToken }
+    return { decodedToken }
   },
 
   extractTokenFromHeader: ({ authorization }: { authorization: string }) => {
     if (!authorization)
-      return { error: 'Authorization header is missing', success: false }
+      throw new CustomError({
+        message: 'Authorization header is missing',
+        statusCode: STATUS_CODE.UNAUTHORIZED
+      })
 
     const [type, tokens] = authorization.split(' ')
     if (type !== 'Bearer' || !tokens)
-      return { error: 'Invalid token format', success: false }
+      throw new CustomError({
+        message: 'Invalid token format',
+        statusCode: STATUS_CODE.UNAUTHORIZED
+      })
 
     return {
-      success: true,
       accessToken: JSON.parse(tokens).accessToken,
       refreshToken: JSON.parse(tokens).refreshToken
     }

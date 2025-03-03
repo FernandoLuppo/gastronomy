@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { STATUS_CODE } from '../../constants/HTTP'
 import { recoverPassword } from '../../services/user/recoverPassword'
 import { cookiesCalc } from '../../utils/helpers'
+import { handleError } from '@src/utils/error'
 
 const { EMAIL_TOKEN_MAX_AGE, HTTP_ONLY } = process.env
 const httpOnly = HTTP_ONLY === 'true' ? true : false
@@ -9,11 +10,8 @@ const httpOnly = HTTP_ONLY === 'true' ? true : false
 const recoverPasswordController = {
   checkEmail: async (req: Request, res: Response) => {
     try {
-      console.log('test')
-      const { success, emailToken, securityCode, error } =
+      const { emailToken, securityCode } =
         await recoverPassword.checkEmailService({ email: req.body.email })
-
-      if (!success) throw new Error(error)
 
       return res
         .cookie('emailToken', emailToken, {
@@ -25,12 +23,9 @@ const recoverPasswordController = {
           sameSite: 'lax'
         })
         .status(STATUS_CODE.SUCCESS)
-        .send({ success, securityCode })
+        .send({ success: true, securityCode })
     } catch (error) {
-      console.log(error)
-      return res
-        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .send({ success: false, error })
+      handleError({ error, res })
     }
   },
 
@@ -40,13 +35,11 @@ const recoverPasswordController = {
       const tokenCode = req.authenticatedUser.token.content
       const userId = req.authenticatedUser.token.sub
 
-      const { success, emailToken, error } =
-        await recoverPassword.checkCodeService({
-          securityCode,
-          tokenCode,
-          userId
-        })
-      if (!success) throw new Error(error)
+      const { emailToken } = await recoverPassword.checkCodeService({
+        securityCode,
+        tokenCode,
+        userId
+      })
 
       return res
         .cookie('emailToken', emailToken, {
@@ -58,12 +51,9 @@ const recoverPasswordController = {
           sameSite: 'lax'
         })
         .status(STATUS_CODE.SUCCESS)
-        .send({ success })
+        .send({ success: true })
     } catch (error) {
-      console.log(error)
-      return res
-        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .send({ success: false, error })
+      handleError({ error, res })
     }
   },
 
@@ -72,18 +62,14 @@ const recoverPasswordController = {
       const userId = req.authenticatedUser.token.sub
       const password = req.body.password
 
-      const { success, error } = await recoverPassword.newPassword({
+      await recoverPassword.newPassword({
         _id: userId,
         password
       })
-      if (!success) throw new Error(error)
 
-      return res.status(STATUS_CODE.SUCCESS).send({ success })
+      return res.status(STATUS_CODE.SUCCESS).send({ success: true })
     } catch (error) {
-      console.log(error)
-      return res
-        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .send({ success: false, error })
+      handleError({ error, res })
     }
   }
 }

@@ -7,7 +7,7 @@ const getRecipeList = async ({
   recipeType: string;
   dishType: string;
 }) => {
-  const data = await useApi({
+  const { data } = await useApi({
     method: "GET",
     url: `/recipes/recipe-list?recipe=${recipeType}&dish=${dishType}`
   });

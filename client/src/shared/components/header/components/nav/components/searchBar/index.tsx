@@ -24,13 +24,13 @@ export const SearchBar = () => {
 
   useEffect(() => {
     const getSearchData = async () => {
-      const data = await useApi({
+      const { data } = await useApi({
         method: "POST",
         url: "/recipes/search",
         body: { ingredient: searchIngredient }
       });
 
-      const hits = data.recipes?.hits ?? [];
+      const hits = data?.recipes?.hits ?? [];
       setRecipes(hits.slice(0, 3));
     };
 

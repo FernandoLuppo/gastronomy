@@ -3,6 +3,7 @@ import { tokenService } from '../../../services/token'
 import { IPayload } from '../../../types'
 import { STATUS_CODE } from '../../../constants/HTTP'
 import { cookiesCalc } from '../../../utils/helpers'
+import { CustomError } from '@src/utils/error'
 
 const { ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE, HTTP_ONLY } = process.env
 const httpOnly = HTTP_ONLY === 'true' ? true : false
@@ -10,31 +11,33 @@ const httpOnly = HTTP_ONLY === 'true' ? true : false
 export const tokenAuthentication = {
   privateRoutes: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { accessToken, refreshToken, success, error } =
-        tokenService.extractTokenFromHeader({
-          authorization: req.headers.authorization as string
-        })
-      if (!success) throw new Error(error as string)
+      const tokenExtracted: any = tokenService.extractTokenFromHeader({
+        authorization: req.headers.authorization as string
+      })
 
       const accessTokenValidate = tokenService.validateToken({
         req,
         secret: 'accessToken',
-        token: accessToken
+        token: tokenExtracted.accessToken
       })
-      if (accessTokenValidate.success) return next()
+      if (accessTokenValidate) return next()
 
-      const refreshTokenValidate = tokenService.validateToken({
+      const refreshTokenValidate: any = tokenService.validateToken({
         req,
         secret: 'refreshToken',
-        token: refreshToken
+        token: tokenExtracted.refreshToken
       })
-      if (!refreshTokenValidate.success)
-        throw new Error(refreshTokenValidate.error as string)
+
+      if (!refreshTokenValidate) {
+        throw new CustomError({
+          message: refreshTokenValidate.message as string,
+          statusCode: refreshTokenValidate.statusCode as number
+        })
+      }
 
       const newTokens = await tokenService.createUserToken(
-        refreshTokenValidate.decodedToken?.content as IPayload
+        refreshTokenValidate.decodedToken.content as IPayload
       )
-      if (!newTokens.success) throw new Error(newTokens.error as string)
 
       res
         .cookie('accessToken', newTokens.tokens?.accessToken, {
@@ -70,18 +73,19 @@ export const tokenAuthentication = {
   ) => {
     try {
       const emailToken = req.headers.authorization
-      if (!emailToken) throw new Error('Token is missing!')
+      if (!emailToken)
+        throw new CustomError({
+          message: 'Token is missing!',
+          statusCode: STATUS_CODE.BAD_REQUEST
+        })
 
-      const emailTokenValidated = tokenService.validateToken({
+      tokenService.validateToken({
         req,
         token: emailToken,
         secret: 'emailToken'
       })
 
-      if (!emailTokenValidated.success)
-        throw new Error(emailTokenValidated.error as string)
-
-      next()
+      return next()
     } catch (error) {
       console.log(error)
       return res

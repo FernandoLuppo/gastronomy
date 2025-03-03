@@ -1,10 +1,15 @@
+import { STATUS_CODE } from '@src/constants'
+import { CustomError } from '@src/utils/error'
 import passport from 'passport'
 import GoogleStrategy from 'passport-google-oauth20'
 
 const googleSocialLoginConfig = () => {
   const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env
   if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET)
-    throw new Error('Google envs is missing')
+    throw new CustomError({
+      message: 'Google envs is missing',
+      statusCode: STATUS_CODE.INTERNAL_SERVER_ERROR
+    })
 
   passport.use(
     new GoogleStrategy.Strategy(

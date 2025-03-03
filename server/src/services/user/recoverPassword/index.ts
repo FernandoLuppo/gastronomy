@@ -4,36 +4,33 @@ import { tokenService } from '../../token'
 import { encrypt } from '../encryptPassword'
 import { EmailService } from '../../email'
 import mongoose from 'mongoose'
+import { CustomError } from '@src/utils/error'
+import { STATUS_CODE } from '@src/constants'
 
 export const recoverPassword = {
   checkEmailService: async ({ email }: { email: string }) => {
     const user = await User.findOne({ email })
 
-    if (!user) return { error: 'Email not found', success: false }
+    if (!user)
+      throw new CustomError({
+        message: 'Email not found',
+        statusCode: STATUS_CODE.NOT_FOUND
+      })
 
     const securityCode = securityCodeGenerator()
 
-    const { success, emailToken, error } = tokenService.createEmailToken({
+    const { emailToken } = tokenService.createEmailToken({
       _id: user._id.toString(),
       content: securityCode
     })
 
-    if (!success)
-      return { error: `Error in create email token: ${error}`, success: false }
-
-    const emailService = await EmailService.recoverPassword({
+    await EmailService.recoverPassword({
       recipientEmail: user.email,
       recipientName: user.name,
       securityCode
     })
 
-    if (!emailService.success)
-      return {
-        error: emailService.error || 'Error trying to send email to user',
-        success: false
-      }
-
-    return { success, emailToken, securityCode }
+    return { emailToken, securityCode }
   },
 
   checkCodeService: async ({
@@ -46,20 +43,16 @@ export const recoverPassword = {
     userId: string
   }) => {
     if (securityCode === tokenCode) {
-      const { success, emailToken, error } = tokenService.createEmailToken({
+      const { emailToken } = tokenService.createEmailToken({
         _id: userId
       })
-
-      if (!success)
-        return {
-          error: `Error in create email token: ${error}`,
-          success: false
-        }
-
-      return { success, emailToken }
+      return { emailToken }
     }
 
-    return { error: 'Secret code is wrong', success: false }
+    throw new CustomError({
+      message: 'Secret code is wrong',
+      statusCode: STATUS_CODE.UNAUTHORIZED
+    })
   },
 
   newPassword: async ({ password, _id }: { password: string; _id: string }) => {
@@ -70,8 +63,10 @@ export const recoverPassword = {
       { $set: { password: newPassword.encryptedUserPassword } }
     )
 
-    if (!user) return { error: 'Error in create new password', success: false }
-
-    return { success: true }
+    if (!user)
+      throw new CustomError({
+        message: 'Error in create new password',
+        statusCode: STATUS_CODE.INTERNAL_SERVER_ERROR
+      })
   }
 }

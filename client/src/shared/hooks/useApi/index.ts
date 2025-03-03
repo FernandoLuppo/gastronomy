@@ -4,31 +4,35 @@ interface IUseApi {
   url: string;
   method: string;
   body?: any;
-  cache?: boolean;
+  cache?: "default" | "force-cache" | "no-cache" | "no-store";
   token?: string | { accessToken: string; refreshToken: string };
+  isSSR?: boolean;
 }
 
 export const useApi = async ({
   method,
   url,
   body,
-  cache = true,
-  token
+  cache,
+  token,
+  isSSR = false
 }: IUseApi) => {
   try {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
+    const { NEXT_PUBLIC_API_DOCKER_URL, NEXT_PUBLIC_API_URL } = process.env;
+    const defaultUrl = isSSR ? NEXT_PUBLIC_API_DOCKER_URL : NEXT_PUBLIC_API_URL;
+    const response = await fetch(defaultUrl + url, {
       method: method.toUpperCase(),
       body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
         ...(token ? { Authorization: `Bearer ${token}` } : {})
       },
       credentials: "include",
       mode: "cors",
-      cache: cache ? "default" : "no-cache"
+      cache: cache ? cache : "no-cache"
     });
     const data = await response?.json();
+    console.log("DATA: ", { data });
 
     if (!data.success) {
       throw new Error(data.error, {
@@ -39,8 +43,8 @@ export const useApi = async ({
       });
     }
 
-    return data;
+    return { data, success: true, error: "" };
   } catch (error) {
-    handleError(error as any);
+    return handleError(error as any);
   }
 };

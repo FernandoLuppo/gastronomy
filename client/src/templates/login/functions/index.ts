@@ -28,7 +28,7 @@ const submitData = async ({
   dispatch
 }: ILoginBody) => {
   try {
-    const data = await useApi({
+    const { data } = await useApi({
       url: "/user/login",
       method: "POST",
       body

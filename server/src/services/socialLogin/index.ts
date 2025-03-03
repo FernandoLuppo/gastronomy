@@ -8,14 +8,13 @@ interface ISocialLogin {
 
 const socialLoginService = {
   login: async ({ email, name }: ISocialLogin) => {
-    const newPassword = randomPasswordGenerator()
-
     const userLogin = await userService.login({
       email,
       socialLogin: true
     })
 
     if (!userLogin.success) {
+      const newPassword = randomPasswordGenerator()
       const userRegister = await userService.register({
         data: {
           email,
@@ -23,23 +22,18 @@ const socialLoginService = {
           password: newPassword
         }
       })
-      if (!userRegister.success || !userRegister.data)
-        return { error: 'Unable to register user', success: false }
 
       const userAlreadyRegisteredLogin = await userService.login({
-        email: userRegister.data.email,
+        email: userRegister.email,
         password: newPassword
       })
-      if (!userAlreadyRegisteredLogin.success)
-        return { error: 'Unable to make a login', success: false }
 
       return {
-        success: true,
         userTokens: userAlreadyRegisteredLogin.userTokens
       }
     }
 
-    return { success: userLogin.success, userTokens: userLogin.userTokens }
+    return { userTokens: userLogin.userTokens }
   }
 }
 

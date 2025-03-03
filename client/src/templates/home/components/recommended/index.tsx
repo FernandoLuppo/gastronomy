@@ -1,28 +1,22 @@
 import { Carrousel, RecipeCard } from "@/shared/components";
 import { useApi } from "@/shared/hooks";
 import Image from "next/image";
-// import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import * as motion from "framer-motion/client";
 import { fadeInUp } from "@/shared/css";
-import { IRecommendedRecipes } from "@/shared/types";
 
-export const Recommended = async () => {
-  // const [recommendedRecipes, setRecommendedRecipes] = useState<
-  //   IRecommendedRecipes[] | []
-  // >([]);
-
-  const data = await useApi({
+const getRecommendedRecipes = async () => {
+  const { data } = await useApi({
     method: "GET",
-    url: "/recipes/home-content/recommended"
+    url: "/recipes/home-content/recommended",
+    cache: "force-cache",
+    isSSR: true
   });
 
-  // useEffect(() => {
-  //   const getRecommendedRecipes = async () => {
+  return data?.list;
+};
 
-  //     setRecommendedRecipes(data.list);
-  //   };
-  //   getRecommendedRecipes();
-  // }, []);
+export const Recommended = async () => {
+  const data = await getRecommendedRecipes();
 
   return (
     <motion.section
@@ -44,9 +38,9 @@ export const Recommended = async () => {
         />
       </div>
       <div>
-        {data?.list?.length > 1 && (
+        {data?.length > 1 && (
           <Carrousel>
-            {data?.list
+            {data
               ?.filter((item: any) => item != null)
               .map(({ _id, cuisineType, image, label, mealType }: any) => {
                 return (

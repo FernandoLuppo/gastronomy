@@ -4,6 +4,7 @@ import { STATUS_CODE } from '../../constants/HTTP'
 import { IToken } from '../../types'
 import { cookiesCalc } from '../../utils/helpers'
 import { recoverPassword } from '../../services/user/recoverPassword'
+import { handleError } from '@src/utils/error'
 
 declare global {
   namespace Express {
@@ -23,12 +24,10 @@ export const userController = {
     try {
       const { email, password } = req.body
 
-      const { success, error, userTokens } = await userService.login({
+      const { userTokens } = await userService.login({
         email,
         password
       })
-
-      if (!success) throw new Error(error)
 
       return res
         .status(STATUS_CODE.SUCCESS)
@@ -48,27 +47,20 @@ export const userController = {
           httpOnly,
           sameSite: 'lax'
         })
-        .send({ success })
+        .send({ success: true })
     } catch (error) {
-      console.log(error)
-      res
-        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .send({ success: false, error })
+      handleError({ error, res })
     }
   },
 
   register: async (req: Request, res: Response) => {
     try {
       const data = req.body
-      const { success, error } = await userService.register({ data })
+      await userService.register({ data })
 
-      if (!success) throw new Error(error)
-      return res.status(STATUS_CODE.CREATED).send({ success })
+      return res.status(STATUS_CODE.CREATED).send({ success: true })
     } catch (error) {
-      console.log(error)
-      return res
-        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .send({ success: false, error })
+      handleError({ error, res })
     }
   },
 
@@ -76,17 +68,13 @@ export const userController = {
     try {
       const _id = req.authenticatedUser.token.sub
 
-      const { success, error, user } = await userService.userPersonalInfos({
+      const { user } = await userService.userPersonalInfos({
         _id
       })
-      if (!success) throw new Error(error)
 
-      return res.status(STATUS_CODE.SUCCESS).send({ success, user })
+      return res.status(STATUS_CODE.SUCCESS).send({ success: true, user })
     } catch (error) {
-      console.log(error)
-      return res
-        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .send({ error, success: false })
+      handleError({ error, res })
     }
   },
 
@@ -95,17 +83,14 @@ export const userController = {
       const data = req.body
       const _id = req.authenticatedUser.token.sub
 
-      const { success, error, user } = await userService.updatePersonalInfos({
+      const { user } = await userService.updatePersonalInfos({
         _id,
         data
       })
-      if (!success) throw new Error(error)
 
-      return res.status(STATUS_CODE.SUCCESS).send({ success, user })
+      return res.status(STATUS_CODE.SUCCESS).send({ success: true, user })
     } catch (error) {
-      return res
-        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .send({ error, success: false })
+      handleError({ error, res })
     }
   },
 
@@ -113,12 +98,11 @@ export const userController = {
     try {
       const _id = req.authenticatedUser.token.sub
 
-      const { success, error } = await userService.deleteAccount({ _id })
-      if (!success) throw new Error(error)
+      await userService.deleteAccount({ _id })
 
-      return res.status(STATUS_CODE.SUCCESS).send({ success })
+      return res.status(STATUS_CODE.SUCCESS).send({ success: true })
     } catch (error) {
-      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(error)
+      handleError({ error, res })
     }
   },
 

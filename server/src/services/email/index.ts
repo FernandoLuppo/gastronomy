@@ -1,5 +1,7 @@
+import { CustomError } from '@src/utils/error'
 import { emailConfig } from '../../config/email'
 import { recoverPasswordTemplate } from './template/recoverPassword'
+import { STATUS_CODE } from '@src/constants'
 
 interface IRecoverPassword {
   recipientEmail: string
@@ -14,12 +16,18 @@ const EmailService = {
     recipientName
   }: IRecoverPassword) => {
     const { EMAIL_ADMIN } = process.env
-    const { transporter, success } = emailConfig()
-
     if (!EMAIL_ADMIN)
-      return { error: 'Email credentials are missing', success: false }
-    if (!success || !transporter)
-      return { error: 'Error in email configuration', success: false }
+      throw new CustomError({
+        message: 'Email credentials are missing',
+        statusCode: STATUS_CODE.UNAUTHORIZED
+      })
+
+    const { transporter } = emailConfig()
+    if (!transporter)
+      throw new CustomError({
+        message: 'Error in email configuration',
+        statusCode: STATUS_CODE.INTERNAL_SERVER_ERROR
+      })
 
     const template = recoverPasswordTemplate({
       recipientEmail,
@@ -27,10 +35,13 @@ const EmailService = {
       securityCode,
       sender: EMAIL_ADMIN
     })
-    if (!template) return { success: false, error: 'Error in email template' }
+    if (!template)
+      throw new CustomError({
+        message: 'Error in email template',
+        statusCode: STATUS_CODE.INTERNAL_SERVER_ERROR
+      })
 
     await transporter.sendMail(template)
-    return { success: true }
   }
 }
 
