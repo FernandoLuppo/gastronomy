@@ -6,6 +6,7 @@ import "../../globals.css";
 import { ReduxProvider } from "@/shared/lib/provider";
 import { HeaderLoggedOut } from "@/shared/components";
 import { ThemeProvider } from "next-themes";
+import { Toaster } from "react-hot-toast";
 
 const laBelleAurore = La_Belle_Aurore({
   subsets: ["latin"],
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       >
         <HeaderLoggedOut />
         <ReduxProvider>
+          <Toaster />
           <ThemeProvider attribute="class">{children}</ThemeProvider>
         </ReduxProvider>
       </body>

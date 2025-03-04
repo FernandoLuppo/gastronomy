@@ -7,6 +7,7 @@ import { IoIosSearch } from "react-icons/io";
 import { RecipeList } from "./components";
 import { IRecipe } from "./types";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export const SearchBar = () => {
   const [searchIngredient, setSearchIngredient] = useState("");
@@ -24,11 +25,12 @@ export const SearchBar = () => {
 
   useEffect(() => {
     const getSearchData = async () => {
-      const { data } = await useApi({
+      const { data, success, error } = await useApi({
         method: "POST",
         url: "/recipes/search",
         body: { ingredient: searchIngredient }
       });
+      if (!success) return toast.error(error as string);
 
       const hits = data?.recipes?.hits ?? [];
       setRecipes(hits.slice(0, 3));

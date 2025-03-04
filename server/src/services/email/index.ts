@@ -1,7 +1,7 @@
-import { CustomError } from '@src/utils/error'
+import { CustomError } from '../../utils/error'
 import { emailConfig } from '../../config/email'
 import { recoverPasswordTemplate } from './template/recoverPassword'
-import { STATUS_CODE } from '@src/constants'
+import { STATUS_CODE } from '../../constants'
 
 interface IRecoverPassword {
   recipientEmail: string

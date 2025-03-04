@@ -4,6 +4,7 @@ import {
   IRecoverPasswordCheckSecurityCodeValues,
   ISubmitData
 } from "@/shared/types";
+import toast from "react-hot-toast";
 
 interface IRecoverPasswordCheckSecurityCodeBody extends ISubmitData {
   body: IRecoverPasswordCheckSecurityCodeValues;
@@ -27,13 +28,13 @@ const submitData = async ({
 
     if (!securityCodeToken.success) throw new Error(securityCodeToken.error);
 
-    const data = await useApi({
+    const { success, error } = await useApi({
       url: "/recover-password/check-security-code",
       method: "POST",
       body,
       token: securityCodeToken.token
     });
-    if (!data.success) throw new Error(data.error);
+    if (!success) return toast.error(error as string);
 
     return route.push("/recover-password/new-password");
   } catch (error) {

@@ -6,8 +6,8 @@ import {
   saveToken,
   searchTokenSecretKey
 } from '../../utils/domain'
-import { CustomError } from '@src/utils/error'
-import { STATUS_CODE } from '@src/constants'
+import { CustomError } from '../../utils/error'
+import { STATUS_CODE } from '../../constants'
 
 const {
   ACCESS_TOKEN_SECRET,

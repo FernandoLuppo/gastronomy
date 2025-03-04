@@ -1,6 +1,7 @@
 import { useApi, useAuthForm, useToken } from "@/shared/hooks";
 import { IRecoverPasswordNewPasswordValues, ISubmitData } from "@/shared/types";
 import { newPasswordSchema } from "@/shared/utils";
+import toast from "react-hot-toast";
 
 interface IRecoverPasswordNewPasswordBody extends ISubmitData {
   body: IRecoverPasswordNewPasswordValues;
@@ -24,14 +25,13 @@ const submitData = async ({
     const newPasswordToken = await useToken.get({ tokenName: "emailToken" });
     if (!newPasswordToken.success) throw new Error(newPasswordToken.error);
 
-    const data = await useApi({
+    const { success, error } = await useApi({
       url: "/recover-password/new-password",
       method: "PATCH",
       body,
       token: newPasswordToken.token
     });
-
-    if (!data.success) throw new Error(data.error);
+    if (!success) return toast.error(error as string);
 
     useToken.clear({ tokenName: "emailToken" });
     return route.push("/login");

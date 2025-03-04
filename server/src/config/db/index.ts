@@ -9,15 +9,18 @@ const initDb = () => {
     case 'test':
       mongoURI = MONGO_TEST_URI
       break
-    case 'development':
     default:
       mongoURI = MONGO_DEV_URI
       break
   }
 
+  console.log({ mongoURI })
+
   if (mongoURI) {
     mongoose
-      .connect(mongoURI)
+      .connect(mongoURI, {
+        serverSelectionTimeoutMS: 5000
+      })
       .then(() => {
         console.log(`MongoDB connected successfully to ${AMBIENT} database`)
       })

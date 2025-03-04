@@ -1,5 +1,3 @@
-import { handleError } from "@/shared/utils";
-
 interface IUseApi {
   url: string;
   method: string;
@@ -18,8 +16,10 @@ export const useApi = async ({
   isSSR = false
 }: IUseApi) => {
   try {
-    const { NEXT_PUBLIC_API_DOCKER_URL, NEXT_PUBLIC_API_URL } = process.env;
-    const defaultUrl = isSSR ? NEXT_PUBLIC_API_DOCKER_URL : NEXT_PUBLIC_API_URL;
+    const defaultUrl = isSSR
+      ? process.env.NEXT_PUBLIC_API_DOCKER_URL
+      : process.env.NEXT_PUBLIC_API_URL;
+
     const response = await fetch(defaultUrl + url, {
       method: method.toUpperCase(),
       body: JSON.stringify(body),
@@ -31,20 +31,17 @@ export const useApi = async ({
       mode: "cors",
       cache: cache ? cache : "no-cache"
     });
+
     const data = await response?.json();
-    console.log("DATA: ", { data });
+    if (!data.success) throw new Error(data.error);
 
-    if (!data.success) {
-      throw new Error(data.error, {
-        cause: {
-          status: response.status || "500",
-          message: data?.error?.message || "Server Unknown Error"
-        }
-      });
-    }
-
-    return { data, success: true, error: "" };
+    return { data, success: true };
   } catch (error) {
-    return handleError(error as any);
+    console.log(error);
+    const message =
+      error instanceof Error
+        ? error.message
+        : "An unknown error occurred. Please try again later.";
+    return { error: message, success: false };
   }
 };

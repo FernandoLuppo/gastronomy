@@ -1,4 +1,4 @@
-import { STATUS_CODE } from '@src/constants'
+import { STATUS_CODE } from '../../constants'
 import { Response } from 'express'
 
 interface IHandleError {

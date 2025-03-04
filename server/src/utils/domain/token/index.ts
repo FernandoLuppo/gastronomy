@@ -1,7 +1,7 @@
-import { STATUS_CODE } from '@src/constants'
+import { STATUS_CODE } from '../../../constants'
 import Token from '../../../models/Token'
-import { ICreateToken, ISaveToken } from '@src/types'
-import { CustomError } from '@src/utils/error'
+import { ICreateToken, ISaveToken } from '../../../types'
+import { CustomError } from '../../../utils/error'
 import { sign } from 'jsonwebtoken'
 
 const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, EMAIL_TOKEN_SECRET } =

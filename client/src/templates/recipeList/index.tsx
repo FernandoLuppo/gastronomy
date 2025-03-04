@@ -1,10 +1,6 @@
-"use client";
-
 import Image from "next/image";
 import { Banner, List, Nav } from "./components";
 import { pageContent, recipeListDataFormatter } from "./utils";
-// import { useEffect } from "react";
-// import { useRouter } from "next/navigation";
 
 const RecipeList = ({
   params

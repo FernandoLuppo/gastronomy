@@ -5,8 +5,8 @@ import { ReactNode } from "react";
 import "../../globals.css";
 import { ReduxProvider } from "@/shared/lib/provider";
 import { ThemeProvider } from "next-themes";
-import UseLoadUser from "@/shared/hooks/useUser";
 import { Footer, HeaderLoggedIn } from "@/shared/components";
+import { Toaster } from "react-hot-toast";
 
 const laBelleAurore = La_Belle_Aurore({
   subsets: ["latin"],
@@ -35,8 +35,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       >
         <ReduxProvider>
           <ThemeProvider attribute="class">
-            <UseLoadUser />
             <HeaderLoggedIn isHome={false} />
+            <Toaster />
             {children}
             <Footer />
           </ThemeProvider>

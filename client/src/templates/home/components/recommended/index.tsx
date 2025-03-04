@@ -1,4 +1,4 @@
-import { Carrousel, RecipeCard } from "@/shared/components";
+import { Carrousel, Error, RecipeCard } from "@/shared/components";
 import { useApi } from "@/shared/hooks";
 import Image from "next/image";
 import * as motion from "framer-motion/client";

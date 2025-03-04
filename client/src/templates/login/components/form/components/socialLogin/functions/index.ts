@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+
 const handleSocialLogin = ({ socialMedia }: { socialMedia: string }) => {
   try {
     window.open(
@@ -6,7 +8,11 @@ const handleSocialLogin = ({ socialMedia }: { socialMedia: string }) => {
     );
   } catch (error) {
     console.log(error);
-    alert("Error during social login");
+    const message =
+      error instanceof Error
+        ? error.message
+        : "An error occurred during social login. Please try again later.";
+    return toast.error(message);
   }
 };
 

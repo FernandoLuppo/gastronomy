@@ -1,4 +1,4 @@
-import { CustomError } from '@src/utils/error'
+import { CustomError } from '../../utils/error'
 import { MOCK_RECIPES, STATUS_CODE } from '../../constants'
 import axios from 'axios'
 

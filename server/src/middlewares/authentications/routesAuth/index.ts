@@ -8,7 +8,7 @@ import {
   newPasswordSchema,
   searchBarIngredientsSchema
 } from '../../schemas'
-import { handleError } from '@src/utils/error'
+import { handleError } from '../../../utils/error'
 
 export const routesAuthentication = {
   register: async (req: Request, res: Response, next: NextFunction) => {

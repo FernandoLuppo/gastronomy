@@ -6,7 +6,7 @@ import { PopupModal } from "@/shared/components/popupModal";
 
 export const RecipesModal = () => {
   const positions = {
-    top: 6,
+    top: 23,
     bottom: "auto",
     left: "auto",
     right: 0

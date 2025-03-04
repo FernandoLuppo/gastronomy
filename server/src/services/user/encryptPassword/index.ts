@@ -1,5 +1,5 @@
-import { STATUS_CODE } from '@src/constants'
-import { CustomError } from '@src/utils/error'
+import { STATUS_CODE } from '../../../constants'
+import { CustomError } from '../../../utils/error'
 import bcryptjs from 'bcryptjs'
 
 export const encrypt = ({ password }: { password: string }) => {

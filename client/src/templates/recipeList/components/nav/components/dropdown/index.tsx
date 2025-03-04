@@ -2,7 +2,6 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
-import { useDispatch } from "react-redux";
 
 export const Dropdown = ({
   dishTypePath,
@@ -13,7 +12,6 @@ export const Dropdown = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const dispatch = useDispatch();
 
   const toggleDropdown = () => setIsOpen(prev => !prev);
   const handleOptionClick = async (meal: string) => {
@@ -29,14 +27,14 @@ export const Dropdown = ({
     <div className="relative w-40">
       <button
         onClick={toggleDropdown}
-        className="flex items-center justify-between p-2 rounded-lg w-full bg-primary text-white"
+        className="flex items-center justify-between p-2 rounded-lg w-full bg-primary text-white "
       >
         <span>{dishTypePath}</span>
         {isOpen ? <IoIosArrowDown /> : <IoIosArrowForward />}
       </button>
 
       {isOpen && (
-        <ul className="absolute top-full mt-1 w-full bg-primary border border-placeholder rounded-lg shadow-lg z-10">
+        <ul className="absolute top-full mt-1 w-full bg-primary border border-placeholder rounded-lg shadow-lg z-10 max-h-56 overflow-auto">
           {options.map((item, index) => (
             <li>
               <button
