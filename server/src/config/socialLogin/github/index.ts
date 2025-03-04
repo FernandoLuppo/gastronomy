@@ -1,10 +1,15 @@
+import { STATUS_CODE } from '../../../constants'
+import { CustomError } from '../../../utils/error'
 import passport from 'passport'
 import GitHubStrategy from 'passport-github2'
 
 const githubSocialLogin = () => {
   const { GHUB_CLIENT_ID, GHUB_CLIENT_SECRET } = process.env
   if (!GHUB_CLIENT_ID || !GHUB_CLIENT_SECRET)
-    throw new Error('Google envs is missing')
+    throw new CustomError({
+      message: 'Github envs is missing',
+      statusCode: STATUS_CODE.INTERNAL_SERVER_ERROR
+    })
 
   passport.use(
     new GitHubStrategy.Strategy(

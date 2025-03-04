@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import { IoIosLock } from "react-icons/io";
 
 const NewPassword = () => {
-  // const token = cookies().get("emailToken");
-  // useToken.valid({ token, redirect });
+  const token = cookies().get("emailToken");
+  useToken.valid({ token, redirect });
 
   return (
     <main className="flex-center lg:min-h-screen dark:bg-dark-background-gradient bg-background-gradient">

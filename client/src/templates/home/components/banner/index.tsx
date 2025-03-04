@@ -29,7 +29,7 @@ export const Banner = () => {
         initial="hidden"
         animate="show"
       >
-        <h1 className="max-w-5xl  text-3xl md:text-7xl font-black">
+        <h1 className="max-w-5xl text-3xl md:text-7xl font-black">
           Discover the World's Best Recipes
         </h1>
         <p className="text-base md:text-xl max-w-xl mt-5 mb-5 md:mb-0">

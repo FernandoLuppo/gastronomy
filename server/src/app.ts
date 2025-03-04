@@ -5,7 +5,6 @@ import {
   userRouter,
   recoverPasswordRouter,
   socialLoginRouter,
-  router,
   recipesRouter
 } from './routes'
 import { initDb } from './config/db'
@@ -16,18 +15,14 @@ import {
 import passport from 'passport'
 import session from 'express-session'
 import * as dotenv from 'dotenv'
+import { corsConfig } from './config/cors'
 
 dotenv.config()
 const app = express()
 
 app.use(express.json())
 
-app.use(
-  cors({
-    origin: true,
-    credentials: true
-  })
-)
+app.use(cors(corsConfig))
 
 app.use(cookieParser())
 
@@ -48,7 +43,6 @@ app.use('/user', userRouter)
 app.use('/recover-password', recoverPasswordRouter)
 app.use('/social-login', socialLoginRouter)
 app.use('/recipes', recipesRouter)
-app.use('/', router)
 
 initDb()
 

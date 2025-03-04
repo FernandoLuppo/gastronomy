@@ -4,6 +4,7 @@ import {
   ISubmitData
 } from "@/shared/types";
 import { checkEmailSchema } from "@/shared/utils";
+import toast from "react-hot-toast";
 
 interface IRecoverPasswordCheckEmailBody extends ISubmitData {
   body: IRecoverPasswordCheckEmailFormValues;
@@ -23,13 +24,13 @@ const submitData = async ({
   route
 }: IRecoverPasswordCheckEmailBody) => {
   try {
-    const data = await useApi({
+    const { success, error } = await useApi({
       url: "/recover-password/check-email",
       method: "POST",
       body
     });
 
-    if (!data.success) throw new Error(data.error);
+    if (!success) return toast.error(error as string);
 
     route.push("/recover-password/security-code");
   } catch (error) {

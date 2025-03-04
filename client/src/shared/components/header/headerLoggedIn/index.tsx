@@ -2,16 +2,16 @@
 
 import { Logo, MobileMenu, Nav } from "../components";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 import { IoMdMenu } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/shared/lib/store";
 import { setMobileMenu } from "@/shared/lib/features/mobile-slice";
 
-export const HeaderLoggedIn = () => {
-  const { scrollY } = useScroll();
+export const HeaderLoggedIn = ({ isHome }: { isHome: boolean }) => {
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const { scrollY } = useScroll();
   const { mobileMenu } = useSelector(
     (state: RootState) => state.mobileReducer.show
   );
@@ -21,10 +21,8 @@ export const HeaderLoggedIn = () => {
     const updateScreenSize = () => {
       setIsLargeScreen(window.innerWidth > 1024);
     };
-
     updateScreenSize();
     window.addEventListener("resize", updateScreenSize);
-
     return () => window.removeEventListener("resize", updateScreenSize);
   }, []);
 
@@ -34,10 +32,9 @@ export const HeaderLoggedIn = () => {
     ["transparent", "#7b1d20"]
   );
 
-  const headerStyles = useMemo(() => {
-    if (!isLargeScreen) return { backgroundColor: "#7b1d20" };
-    return { backgroundColor: backgroundColor };
-  }, [isLargeScreen, backgroundColor]);
+  const headerStyles = isHome
+    ? { backgroundColor: isLargeScreen ? backgroundColor : "#7b1d20" }
+    : { backgroundColor: "#7b1d20" };
 
   return (
     <motion.header
@@ -45,7 +42,8 @@ export const HeaderLoggedIn = () => {
         "w-full flex justify-between items-center p-6 md:p-12 fixed top-0 z-10",
         {
           "bg-primary": !isLargeScreen || mobileMenu,
-          "bg-none": isLargeScreen && !mobileMenu
+          "bg-none": isLargeScreen && !mobileMenu,
+          "relative z-0": !isHome
         }
       )}
       style={headerStyles}
@@ -55,14 +53,12 @@ export const HeaderLoggedIn = () => {
       }}
     >
       <Logo />
-
       <Nav />
       <IoMdMenu
         size={30}
         className="block lg:hidden cursor-pointer text-default-white"
         onClick={() => dispatch(setMobileMenu(true))}
       />
-
       {mobileMenu && <MobileMenu />}
     </motion.header>
   );

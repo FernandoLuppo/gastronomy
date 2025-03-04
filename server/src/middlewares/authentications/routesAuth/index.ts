@@ -8,7 +8,7 @@ import {
   newPasswordSchema,
   searchBarIngredientsSchema
 } from '../../schemas'
-import { STATUS_CODE } from '../../../constants/HTTP'
+import { handleError } from '../../../utils/error'
 
 export const routesAuthentication = {
   register: async (req: Request, res: Response, next: NextFunction) => {
@@ -18,10 +18,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log(error)
-      return res
-        .status(STATUS_CODE.UNAUTHORIZED)
-        .send({ error, success: false })
+      handleError({ error, res })
     }
   },
 
@@ -32,10 +29,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log(error)
-      return res
-        .status(STATUS_CODE.UNAUTHORIZED)
-        .send({ error, success: false })
+      handleError({ error, res })
     }
   },
 
@@ -46,10 +40,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log(error)
-      return res
-        .status(STATUS_CODE.UNAUTHORIZED)
-        .send({ error, success: false })
+      handleError({ error, res })
     }
   },
 
@@ -64,10 +55,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log(error)
-      return res
-        .status(STATUS_CODE.UNAUTHORIZED)
-        .send({ error, success: false })
+      handleError({ error, res })
     }
   },
 
@@ -82,10 +70,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log(error)
-      return res
-        .status(STATUS_CODE.UNAUTHORIZED)
-        .send({ error, success: false })
+      handleError({ error, res })
     }
   },
 
@@ -96,10 +81,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log(error)
-      return res
-        .status(STATUS_CODE.UNAUTHORIZED)
-        .send({ error, success: false })
+      handleError({ error, res })
     }
   },
 
@@ -110,13 +92,7 @@ export const routesAuthentication = {
       })
       return next()
     } catch (error) {
-      console.log('test')
-      console.log(' ')
-
-      console.log(error)
-      return res
-        .status(STATUS_CODE.UNAUTHORIZED)
-        .send({ error, success: false })
+      handleError({ error, res })
     }
   }
 }

@@ -13,10 +13,8 @@ import { RootState } from "@/shared/lib/store";
 export const Form = () => {
   const route = useRouter();
   const { errors, handleSubmit, isSubmitting, register, reset } = handleForm();
-  const handleSubmitData = async (body: IRegisterFormValues) => {
-    console.log(1);
+  const handleSubmitData = async (body: IRegisterFormValues) =>
     await submitData({ reset, route, body });
-  };
   const { show } = useSelector((state: RootState) => state.passwordReducer);
 
   return (

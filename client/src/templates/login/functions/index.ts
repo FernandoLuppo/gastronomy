@@ -3,7 +3,7 @@ import { ILoginFormValues, ISubmitData } from "@/shared/types";
 import { useApi, useAuthForm, useToken } from "@/shared/hooks";
 import { RedirectType } from "next/navigation";
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
-import { setUser } from "@/shared/lib/features/user-slice";
+import toast from "react-hot-toast";
 
 interface ILoginBody extends ISubmitData {
   body: ILoginFormValues;
@@ -20,33 +20,19 @@ const handleForm = () => {
   return useAuthForm({ defaultValues, authSchema: loginSchema });
 };
 
-const submitData = async ({
-  reset,
-  route,
-  body,
-  redirect,
-  dispatch
-}: ILoginBody) => {
+const submitData = async ({ reset, route, body }: ILoginBody) => {
   try {
-    const data = await useApi({
+    const { success, error } = await useApi({
       url: "/user/login",
       method: "POST",
       body
     });
+    if (!success) return toast.error(error as string);
 
-    if (!data.success) throw new Error(data.error);
     const getToken = await useToken.get({ tokenName: "accessToken" });
     if (getToken) {
-      // const user = await useToken.valid({
-      //   token: { name: "accessToken", value: getToken.token as string },
-      //   redirect
-      // });
-
-      // dispatch(setUser(user.token));
       return route.push("/");
     }
-
-    return alert("Error logging in, please try again later.");
   } catch (error) {
     console.log(error);
   } finally {

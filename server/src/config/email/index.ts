@@ -1,10 +1,15 @@
+import { STATUS_CODE } from '../../constants'
+import { CustomError } from '../../utils/error'
 import nodemailer from 'nodemailer'
 
 const emailConfig = () => {
   const { EMAIL_ADMIN, EMAIL_PASSWORD } = process.env
 
   if (!EMAIL_ADMIN || !EMAIL_PASSWORD)
-    return { error: 'Email credentials are missing', success: false }
+    throw new CustomError({
+      message: 'Email credentials are missing',
+      statusCode: STATUS_CODE.INTERNAL_SERVER_ERROR
+    })
 
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -18,7 +23,7 @@ const emailConfig = () => {
       rejectUnauthorized: false
     }
   })
-  return { transporter, success: true }
+  return { transporter }
 }
 
 export { emailConfig }

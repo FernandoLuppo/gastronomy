@@ -35,6 +35,9 @@ export async function GET(req: NextRequest) {
     };
 
     delete decodedToken.content.password;
+    console.log(" ");
+    console.log({ decodedToken });
+    console.log(" ");
 
     return NextResponse.json({ success: true, token: decodedToken.content });
   } catch (error) {

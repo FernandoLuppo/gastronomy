@@ -1,5 +1,7 @@
+import { STATUS_CODE } from '../../../constants'
 import Token from '../../../models/Token'
-import { ICreateToken, ISaveToken } from '@src/types'
+import { ICreateToken, ISaveToken } from '../../../types'
+import { CustomError } from '../../../utils/error'
 import { sign } from 'jsonwebtoken'
 
 const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, EMAIL_TOKEN_SECRET } =
@@ -12,14 +14,17 @@ export const createToken = ({
   secret
 }: ICreateToken) => {
   if (!payload || !sub || !expiresIn || !secret)
-    return { error: 'data to create token is missing', success: false }
+    throw new CustomError({
+      message: 'data to create token is missing',
+      statusCode: STATUS_CODE.UNAUTHORIZED
+    })
 
   const token = sign(payload, secret, {
     subject: sub,
     expiresIn
   })
 
-  return { success: true, token }
+  return { token }
 }
 
 export const saveToken = async ({ _id, refreshToken }: ISaveToken) => {
@@ -29,8 +34,11 @@ export const saveToken = async ({ _id, refreshToken }: ISaveToken) => {
     { upsert: true, new: true }
   )
 
-  if (!token) return { error: 'Error saving token!', success: false }
-  return { success: true }
+  if (!token)
+    throw new CustomError({
+      message: 'Error saving token!',
+      statusCode: STATUS_CODE.INTERNAL_SERVER_ERROR
+    })
 }
 
 export const searchTokenSecretKey = ({

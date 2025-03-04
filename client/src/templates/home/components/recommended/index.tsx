@@ -1,30 +1,22 @@
-"use client";
-
-import { Carrousel } from "@/shared/components";
+import { Carrousel, Error, RecipeCard } from "@/shared/components";
 import { useApi } from "@/shared/hooks";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import * as motion from "framer-motion/client";
 import { fadeInUp } from "@/shared/css";
-import { IRecommendedRecipes } from "@/shared/types";
-import { CarrouselCard } from "./components";
 
-export const Recommended = () => {
-  const [recommendedRecipes, setRecommendedRecipes] = useState<
-    IRecommendedRecipes[] | []
-  >([]);
+const getRecommendedRecipes = async () => {
+  const { data } = await useApi({
+    method: "GET",
+    url: "/recipes/home-content/recommended",
+    cache: "force-cache",
+    isSSR: true
+  });
 
-  useEffect(() => {
-    const getRecommendedRecipes = async () => {
-      const data = await useApi({
-        method: "GET",
-        url: "/home-content"
-      });
+  return data?.list;
+};
 
-      setRecommendedRecipes(data.list);
-    };
-    getRecommendedRecipes();
-  }, []);
+export const Recommended = async () => {
+  const data = await getRecommendedRecipes();
 
   return (
     <motion.section
@@ -46,22 +38,22 @@ export const Recommended = () => {
         />
       </div>
       <div>
-        {recommendedRecipes.length > 1 && (
+        {data?.length > 1 && (
           <Carrousel>
-            {recommendedRecipes?.map(
-              ({ _id, cuisineType, image, label, mealType }, index) => {
+            {data
+              ?.filter((item: any) => item != null)
+              .map(({ _id, cuisineType, image, label, mealType }: any) => {
                 return (
-                  <CarrouselCard
+                  <RecipeCard
+                    key={_id}
                     _id={_id || ""}
-                    cuisineType={cuisineType || [""]}
+                    cuisineType={cuisineType || ""}
                     image={image || ""}
                     label={label || ""}
-                    mealType={mealType || [""]}
-                    key={_id || index}
+                    mealType={mealType || ""}
                   />
                 );
-              }
-            )}
+              })}
           </Carrousel>
         )}
       </div>
