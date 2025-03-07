@@ -7,7 +7,7 @@
     "build": "tsup src",
     "dev": "nodemon src/server.ts",
     "start": "node dist/server.js",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint \"**/*.ts\""
   },
   "author": "",
   "license": "ISC",
