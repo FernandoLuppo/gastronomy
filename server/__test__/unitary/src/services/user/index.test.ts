@@ -1,10 +1,11 @@
-import { userService } from '../../../../../src/services/user/index'
+import * as dotenv from 'dotenv'
+
+import User from '../../../../../src/models/User'
 import {
   encrypt,
   decrypt
 } from '../../../../../src/services/user/encryptPassword'
-import User from '../../../../../src/models/User'
-import * as dotenv from 'dotenv'
+import { userService } from '../../../../../src/services/user/index'
 
 dotenv.config()
 

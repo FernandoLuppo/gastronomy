@@ -1,7 +1,9 @@
-import { recoverPasswordTemplate } from '../../../../../src/services/email/template/recoverPassword'
-import { EmailService } from '../../../../../src/services/email'
-import { emailConfig } from '../../../../../src/config/email'
 import * as dotenv from 'dotenv'
+
+import { emailConfig } from '../../../../../src/config/email'
+import { EmailService } from '../../../../../src/services/email'
+import { recoverPasswordTemplate } from '../../../../../src/services/email/template/recoverPassword'
+
 dotenv.config()
 
 const mockData = {

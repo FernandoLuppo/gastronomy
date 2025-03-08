@@ -1,4 +1,5 @@
 import { Router } from 'express'
+
 import { RecipesController } from '../../../src/controllers/RecipesController'
 import { routesAuthentication } from '../../../src/middlewares/authentications/routesAuth'
 

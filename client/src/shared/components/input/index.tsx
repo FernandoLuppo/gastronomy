@@ -4,8 +4,8 @@ import { InputEye } from "./components/inputEye";
 interface IInput extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   id: string;
-  errors: any;
-  register: any;
+  errors: { message: string };
+  register: object;
   passwordType?: "password" | "conformPassword";
 }
 

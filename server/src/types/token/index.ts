@@ -2,17 +2,17 @@ import { Request } from 'express'
 
 export interface IPayload {
   _id: string
-  content?: any
+  content?: unknown
 }
 
 export interface IToken {
   sub: string
-  content: any
+  content: unknown
 }
 
 export interface ICreateToken {
   payload: {
-    content: any
+    content: unknown
     role?: string
   }
   sub: string

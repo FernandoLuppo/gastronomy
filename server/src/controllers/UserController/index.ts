@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
-import { userService } from '../../services/user'
+
 import { STATUS_CODE } from '../../constants/HTTP'
+import { userService } from '../../services/user'
 import { IToken } from '../../types'
+import { handleError } from '../../utils/error'
 import { cookiesCalc } from '../../utils/helpers'
-import { recoverPassword } from '../../services/user/recoverPassword'
-import { CustomError, handleError } from '../../utils/error'
 
 declare global {
   namespace Express {
@@ -22,8 +22,6 @@ const httpOnly = HTTP_ONLY === 'true' ? true : false
 export const userController = {
   login: async (req: Request, res: Response) => {
     try {
-      throw new CustomError({ message: 'Test', statusCode: 500 })
-
       const { email, password } = req.body
 
       const { userTokens } = await userService.login({

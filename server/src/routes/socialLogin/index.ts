@@ -1,6 +1,7 @@
-import { NextFunction, Router } from 'express'
-import { socialLoginController } from '../../controllers/socialLogin'
+import { Router } from 'express'
 import passport from 'passport'
+
+import { socialLoginController } from '../../controllers/socialLogin'
 
 const socialLoginRouter = Router()
 

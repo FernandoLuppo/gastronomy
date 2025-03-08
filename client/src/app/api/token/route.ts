@@ -31,13 +31,10 @@ export async function GET(req: NextRequest) {
 
     const decodedToken = verify(token.value, tokenSecret) as {
       sub: string;
-      content: any;
+      content: { password?: string };
     };
 
     delete decodedToken.content.password;
-    console.log(" ");
-    console.log({ decodedToken });
-    console.log(" ");
 
     return NextResponse.json({ success: true, token: decodedToken.content });
   } catch (error) {

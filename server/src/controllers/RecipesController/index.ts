@@ -1,7 +1,8 @@
-import { CustomError, handleError } from '../../utils/error'
+import { Request, Response } from 'express'
+
 import { STATUS_CODE } from '../../constants'
 import { recipesService } from '../../services/recipes'
-import { Request, Response } from 'express'
+import { CustomError, handleError } from '../../utils/error'
 
 const RecipesController = {
   homeContentRecommended: async (req: Request, res: Response) => {

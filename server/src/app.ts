@@ -1,21 +1,22 @@
-import express from 'express'
-import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
+import * as dotenv from 'dotenv'
+import express from 'express'
+import session from 'express-session'
+import passport from 'passport'
+
+import { corsConfig } from './config/cors'
+import { initDb } from './config/db'
+import {
+  githubSocialLogin,
+  googleSocialLoginConfig
+} from './config/socialLogin'
 import {
   userRouter,
   recoverPasswordRouter,
   socialLoginRouter,
   recipesRouter
 } from './routes'
-import { initDb } from './config/db'
-import {
-  githubSocialLogin,
-  googleSocialLoginConfig
-} from './config/socialLogin'
-import passport from 'passport'
-import session from 'express-session'
-import * as dotenv from 'dotenv'
-import { corsConfig } from './config/cors'
 
 dotenv.config()
 const app = express()

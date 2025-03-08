@@ -1,10 +1,11 @@
+import * as dotenv from 'dotenv'
+
 import Token from '../../../../../../src/models/Token'
 import {
   createToken,
   saveToken,
   searchTokenSecretKey
 } from '../../../../../../src/utils/domain'
-import * as dotenv from 'dotenv'
 dotenv.config()
 
 const mockTokenInfos = {

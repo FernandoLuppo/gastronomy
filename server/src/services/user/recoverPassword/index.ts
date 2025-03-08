@@ -1,11 +1,12 @@
+import mongoose from 'mongoose'
+
+import { STATUS_CODE } from '../../../constants'
 import User from '../../../models/User'
+import { CustomError } from '../../../utils/error'
 import { securityCodeGenerator } from '../../../utils/helpers/securityCodeGenerator'
+import { EmailService } from '../../email'
 import { tokenService } from '../../token'
 import { encrypt } from '../encryptPassword'
-import { EmailService } from '../../email'
-import mongoose from 'mongoose'
-import { CustomError } from '../../../utils/error'
-import { STATUS_CODE } from '../../../constants'
 
 export const recoverPassword = {
   checkEmailService: async ({ email }: { email: string }) => {

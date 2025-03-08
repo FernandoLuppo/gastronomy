@@ -24,9 +24,9 @@ const mockReq = {
 
 const mockData = {
   accessToken: 'mockAccessToken',
-  accessTokenSecret: 'accessToken' as 'accessToken',
+  accessTokenSecret: 'accessToken' as const,
   refreshToken: 'mockRefreshToken',
-  refreshTokenSecret: 'refreshToken' as 'refreshToken'
+  refreshTokenSecret: 'refreshToken' as const
 }
 
 const req = mockReq as any

@@ -1,6 +1,7 @@
+import bcryptjs from 'bcryptjs'
+
 import { STATUS_CODE } from '../../../constants'
 import { CustomError } from '../../../utils/error'
-import bcryptjs from 'bcryptjs'
 
 export const encrypt = ({ password }: { password: string }) => {
   const encryption = bcryptjs.genSaltSync(10)

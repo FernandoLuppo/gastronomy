@@ -1,8 +1,8 @@
-import User from '../../models/User'
-import { decrypt, encrypt } from './encryptPassword'
-import { tokenService } from '../token'
-import { CustomError } from '../../utils/error'
 import { STATUS_CODE } from '../../constants'
+import User from '../../models/User'
+import { CustomError } from '../../utils/error'
+import { tokenService } from '../token'
+import { decrypt, encrypt } from './encryptPassword'
 
 interface ILogin {
   email: string

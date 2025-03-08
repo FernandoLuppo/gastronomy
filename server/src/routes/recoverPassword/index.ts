@@ -1,6 +1,7 @@
 import { Router } from 'express'
-import { routesAuthentication } from '../../middlewares/authentications/routesAuth'
+
 import { recoverPasswordController } from '../../controllers/RecoverPasswordController'
+import { routesAuthentication } from '../../middlewares/authentications/routesAuth'
 import { tokenAuthentication } from '../../middlewares/authentications/tokenAuth'
 
 const recoverPasswordRouter = Router()

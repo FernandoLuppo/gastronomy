@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-      - develops
+      - develop
   pull_request:
     branches:
       - main
-      - develops
+      - develop
 
 jobs:
   build-and-test:
@@ -70,7 +70,7 @@ jobs:
             sleep 3;
           done
 
-      - name: Cache node_modules
+      - name: Cache server node_modules
         uses: actions/cache@v3
         with:
           path: ./server/node_modules
@@ -82,14 +82,40 @@ jobs:
         working-directory: ./server
         run: yarn install
 
-      - name: Run Linter
+      - name: Run linter with auto-fix in server
         working-directory: ./server
-        run: yarn lint
-
-      - name: Run Linter with auto-fix
-        working-directory: ./server
-        run: yarn lint --fix
+        run: yarn lint:fix && yarn format
 
       # - name: Run tests for Server
       #   working-directory: ./server
       #   run: yarn test
+      #   run: yarn test
+
+      - name: Create .env file
+        working-directory: ./client
+        run: |
+          cat <<EOF > .env
+          AMBIENT=${{ secrets.AMBIENT }}
+          NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}
+          NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_API_DOCKER_URL=${{ secrets.NEXT_PUBLIC_API_DOCKER_URL }}
+          ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
+          REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
+          EMAIL_TOKEN_SECRET=${{ secrets.EMAIL_TOKEN_SECRET }}
+          EOF
+
+      - name: Cache client node_modules
+        uses: actions/cache@v3
+        with:
+          path: ./client/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies for client
+        working-directory: ./client
+        run: yarn install
+
+      - name: Run linter with auto-fix in client
+        working-directory: ./client
+        run: yarn lint --fix

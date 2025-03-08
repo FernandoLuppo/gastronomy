@@ -10,7 +10,7 @@ export function middleware(request: Request) {
     const dishType = pathSegments[2];
 
     switch (recipeType) {
-      case "meal":
+      case "meal": {
         const validDishTypeForMeal = RECIPES_HOME.mealType.map(
           item => item.urlSeo
         );
@@ -18,8 +18,9 @@ export function middleware(request: Request) {
           return NextResponse.redirect(new URL("/404", request.url));
         }
         break;
+      }
 
-      case "cuisine":
+      case "cuisine": {
         const validDishTypeForCuisine = RECIPES_HOME.cuisineType.map(
           item => item.urlSeo
         );
@@ -27,6 +28,7 @@ export function middleware(request: Request) {
           return NextResponse.redirect(new URL("/404", request.url));
         }
         break;
+      }
 
       default:
         return NextResponse.redirect(new URL("/404", request.url));

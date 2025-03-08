@@ -1,9 +1,24 @@
 import { NextFunction, Request, Response } from 'express'
+
+import { STATUS_CODE } from '../../../constants/HTTP'
 import { tokenService } from '../../../services/token'
 import { IPayload } from '../../../types'
-import { STATUS_CODE } from '../../../constants/HTTP'
-import { cookiesCalc } from '../../../utils/helpers'
 import { CustomError } from '../../../utils/error'
+import { cookiesCalc } from '../../../utils/helpers'
+
+interface TokenExtracted {
+  accessToken: string
+  refreshToken: string
+}
+
+interface TokenValidationResult {
+  decodedToken?: {
+    sub: string
+    content: IPayload
+  }
+  message?: string
+  statusCode?: number
+}
 
 const { ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE, HTTP_ONLY } = process.env
 const httpOnly = HTTP_ONLY === 'true' ? true : false
@@ -11,32 +26,29 @@ const httpOnly = HTTP_ONLY === 'true' ? true : false
 export const tokenAuthentication = {
   privateRoutes: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const tokenExtracted: any = tokenService.extractTokenFromHeader({
-        authorization: req.headers.authorization as string
-      })
+      const tokenExtracted: TokenExtracted =
+        tokenService.extractTokenFromHeader({
+          authorization: req.headers.authorization as string
+        })
 
-      const accessTokenValidate = tokenService.validateToken({
-        req,
-        secret: 'accessToken',
-        token: tokenExtracted.accessToken
-      })
+      const accessTokenValidate: TokenValidationResult =
+        tokenService.validateToken({
+          req,
+          secret: 'accessToken',
+          token: tokenExtracted.accessToken
+        })
+
       if (accessTokenValidate) return next()
 
-      const refreshTokenValidate: any = tokenService.validateToken({
-        req,
-        secret: 'refreshToken',
-        token: tokenExtracted.refreshToken
-      })
-
-      if (!refreshTokenValidate) {
-        throw new CustomError({
-          message: refreshTokenValidate.message as string,
-          statusCode: refreshTokenValidate.statusCode as number
+      const refreshTokenValidate: TokenValidationResult =
+        tokenService.validateToken({
+          req,
+          secret: 'refreshToken',
+          token: tokenExtracted.refreshToken
         })
-      }
 
       const newTokens = await tokenService.createUserToken(
-        refreshTokenValidate.decodedToken.content as IPayload
+        refreshTokenValidate.decodedToken?.content as IPayload
       )
 
       res
