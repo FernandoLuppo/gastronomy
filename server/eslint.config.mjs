@@ -2,7 +2,7 @@
 import eslintJs from '@eslint/js'
 import tsParser from '@typescript-eslint/parser'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
-import prettierConfig from 'eslint-config-prettier'
+import prettierPlugin from 'eslint-plugin-prettier'
 import importHelpers from 'eslint-plugin-import-helpers'
 import globals from 'globals'
 
@@ -23,7 +23,8 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tsPlugin,
-      'import-helpers': importHelpers
+      'import-helpers': importHelpers,
+      prettier: prettierPlugin
     },
     rules: {
       ...tsPlugin.configs.recommended.rules,
@@ -38,16 +39,16 @@ export default [
           groups: ['module', '/^@shared/', ['parent', 'sibling', 'index']],
           alphabetize: { order: 'asc', ignoreCase: true }
         }
-      ]
+      ],
+      'prettier/prettier': 'error'
     }
   },
-  prettierConfig,
   {
     ignores: [
-      'node_modules/',
-      'dist/',
-      'coverage/',
-      '__test__/',
+      'node_modules',
+      'dist',
+      'coverage',
+      '__test__',
       '**/*.js',
       '/*.json'
     ]

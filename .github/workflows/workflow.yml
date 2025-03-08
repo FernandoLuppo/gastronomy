@@ -89,6 +89,7 @@ jobs:
       # - name: Run tests for Server
       #   working-directory: ./server
       #   run: yarn test
+      #   run: yarn test
 
       - name: Create .env file
         working-directory: ./client
