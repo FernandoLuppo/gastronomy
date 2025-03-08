@@ -1,5 +1,6 @@
-import { tokenService } from '../../../../../src/services/token'
 import * as dotenv from 'dotenv'
+
+import { tokenService } from '../../../../../src/services/token'
 dotenv.config()
 
 describe('tokenService', () => {

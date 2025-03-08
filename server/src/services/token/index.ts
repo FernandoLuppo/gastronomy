@@ -1,5 +1,7 @@
-import { verify } from 'jsonwebtoken'
 import dayjs from 'dayjs'
+import { verify } from 'jsonwebtoken'
+
+import { STATUS_CODE } from '../../constants'
 import { IPayload, ITokenValidate } from '../../types'
 import {
   createToken,
@@ -7,7 +9,6 @@ import {
   searchTokenSecretKey
 } from '../../utils/domain'
 import { CustomError } from '../../utils/error'
-import { STATUS_CODE } from '../../constants'
 
 const {
   ACCESS_TOKEN_SECRET,
@@ -104,7 +105,7 @@ export const tokenService = {
     const tokenWithoutBearer = token.replace('Bearer ', '')
     const decodedToken = verify(tokenWithoutBearer, secretKey) as {
       sub: string
-      content: any
+      content: IPayload
     }
 
     console.log('validateToken.decodedToken ---> ', { decodedToken })

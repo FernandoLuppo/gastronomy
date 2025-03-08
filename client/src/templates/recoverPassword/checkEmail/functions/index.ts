@@ -1,4 +1,4 @@
-import { useApi, useAuthForm, useToken } from "@/shared/hooks";
+import { useApi, useAuthForm } from "@/shared/hooks";
 import {
   IRecoverPasswordCheckEmailFormValues,
   ISubmitData

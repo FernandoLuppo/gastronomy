@@ -1,8 +1,9 @@
+import bcryptjs from 'bcryptjs'
+
 import {
   decrypt,
   encrypt
 } from '../../../../../../src/services/user/encryptPassword'
-import bcryptjs from 'bcryptjs'
 
 jest.mock('bcryptjs', () => ({
   genSaltSync: jest.fn(),

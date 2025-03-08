@@ -1,7 +1,9 @@
-import { STATUS_CODE } from '../../../constants'
-import { CustomError } from '../../../utils/error'
+import { ISocialLoginDeserializeUser } from '@src/types'
 import passport from 'passport'
 import GitHubStrategy from 'passport-github2'
+
+import { STATUS_CODE } from '../../../constants'
+import { CustomError } from '../../../utils/error'
 
 const githubSocialLogin = () => {
   const { GHUB_CLIENT_ID, GHUB_CLIENT_SECRET } = process.env
@@ -31,7 +33,9 @@ const githubSocialLogin = () => {
     )
   )
   passport.serializeUser((user, done) => done(null, user))
-  passport.deserializeUser((user: any, done) => done(null, user))
+  passport.deserializeUser((user: ISocialLoginDeserializeUser, done) =>
+    done(null, user)
+  )
 }
 
 export { githubSocialLogin }

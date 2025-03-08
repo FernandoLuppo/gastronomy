@@ -1,6 +1,7 @@
-import { CustomError } from '../../utils/error'
-import { MOCK_RECIPES, STATUS_CODE } from '../../constants'
 import axios from 'axios'
+
+import { MOCK_RECIPES, STATUS_CODE } from '../../constants'
+import { CustomError } from '../../utils/error'
 
 interface IRecipe {
   recipe: {

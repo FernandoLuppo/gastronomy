@@ -84,7 +84,7 @@ jobs:
 
       - name: Run linter with auto-fix in server
         working-directory: ./server
-        run: yarn lint --fix
+        run: yarn lint:fix && yarn format
 
       # - name: Run tests for Server
       #   working-directory: ./server

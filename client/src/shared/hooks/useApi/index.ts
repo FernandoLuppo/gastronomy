@@ -1,7 +1,7 @@
 interface IUseApi {
   url: string;
   method: string;
-  body?: any;
+  body?: unknown;
   cache?: "default" | "force-cache" | "no-cache" | "no-store";
   token?: string | { accessToken: string; refreshToken: string };
   isSSR?: boolean;

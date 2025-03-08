@@ -1,21 +1,23 @@
+import { useForm, UseFormReturn, DefaultValues } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { AnyObjectSchema, InferType } from "yup";
 
-interface IUseAuthForm {
-  authSchema: any;
-  defaultValues: any;
+interface IUseAuthForm<T extends AnyObjectSchema> {
+  authSchema: T;
+  defaultValues: InferType<T>;
 }
 
-const useAuthForm = ({ authSchema, defaultValues }: IUseAuthForm) => {
-  const { register, handleSubmit, formState, reset } = useForm({
+const useAuthForm = <T extends AnyObjectSchema>({
+  authSchema,
+  defaultValues
+}: IUseAuthForm<T>): UseFormReturn<InferType<T>> => {
+  const formMethods = useForm<InferType<T>>({
     mode: "all",
     resolver: yupResolver(authSchema),
-    defaultValues
+    defaultValues: defaultValues as DefaultValues<InferType<T>>
   });
 
-  const { errors, isSubmitting } = formState;
-
-  return { register, handleSubmit, errors, isSubmitting, reset };
+  return formMethods;
 };
 
 export { useAuthForm };

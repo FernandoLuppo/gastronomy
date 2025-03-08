@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
-import { socialLoginService } from '../../services/socialLogin'
+
 import { STATUS_CODE } from '../../constants/HTTP'
-import { cookiesCalc } from '../../utils/helpers'
+import { socialLoginService } from '../../services/socialLogin'
 import { handleError } from '../../utils/error'
+import { cookiesCalc } from '../../utils/helpers'
 
 const { ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE, HTTP_ONLY, WEBSITE_URL } =
   process.env

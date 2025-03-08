@@ -1,10 +1,12 @@
-import { encrypt } from '../../../../../../src/services/user/encryptPassword'
+import * as dotenv from 'dotenv'
+
 import User from '../../../../../../src/models/User'
 import { EmailService } from '../../../../../../src/services/email'
 import { tokenService } from '../../../../../../src/services/token'
+import { encrypt } from '../../../../../../src/services/user/encryptPassword'
 import { recoverPassword } from '../../../../../../src/services/user/recoverPassword'
 import { securityCodeGenerator } from '../../../../../../src/utils/helpers/securityCodeGenerator'
-import * as dotenv from 'dotenv'
+
 dotenv.config()
 
 jest.mock('../../../../../../src/models/User')

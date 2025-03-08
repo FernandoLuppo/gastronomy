@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
+
+import { handleError } from '../../../utils/error'
 import {
   checkCodeSchema,
   loginSchema,
@@ -8,7 +10,6 @@ import {
   newPasswordSchema,
   searchBarIngredientsSchema
 } from '../../schemas'
-import { handleError } from '../../../utils/error'
 
 export const routesAuthentication = {
   register: async (req: Request, res: Response, next: NextFunction) => {

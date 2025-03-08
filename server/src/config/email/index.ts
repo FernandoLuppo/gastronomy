@@ -1,6 +1,7 @@
+import nodemailer from 'nodemailer'
+
 import { STATUS_CODE } from '../../constants'
 import { CustomError } from '../../utils/error'
-import nodemailer from 'nodemailer'
 
 const emailConfig = () => {
   const { EMAIL_ADMIN, EMAIL_PASSWORD } = process.env

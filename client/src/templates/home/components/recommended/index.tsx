@@ -1,8 +1,9 @@
-import { Carrousel, Error, RecipeCard } from "@/shared/components";
+import { Carrousel, RecipeCard } from "@/shared/components";
 import { useApi } from "@/shared/hooks";
 import Image from "next/image";
 import * as motion from "framer-motion/client";
 import { fadeInUp } from "@/shared/css";
+import { IRecipeCard } from "./types";
 
 const getRecommendedRecipes = async () => {
   const { data } = await useApi({
@@ -41,19 +42,21 @@ export const Recommended = async () => {
         {data?.length > 1 && (
           <Carrousel>
             {data
-              ?.filter((item: any) => item != null)
-              .map(({ _id, cuisineType, image, label, mealType }: any) => {
-                return (
-                  <RecipeCard
-                    key={_id}
-                    _id={_id || ""}
-                    cuisineType={cuisineType || ""}
-                    image={image || ""}
-                    label={label || ""}
-                    mealType={mealType || ""}
-                  />
-                );
-              })}
+              ?.filter((item: unknown) => item != null)
+              .map(
+                ({ _id, cuisineType, image, label, mealType }: IRecipeCard) => {
+                  return (
+                    <RecipeCard
+                      key={_id}
+                      _id={_id || ""}
+                      cuisineType={cuisineType || ""}
+                      image={image || ""}
+                      label={label || ""}
+                      mealType={mealType || ""}
+                    />
+                  );
+                }
+              )}
           </Carrousel>
         )}
       </div>
