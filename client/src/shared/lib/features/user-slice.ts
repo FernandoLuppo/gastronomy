@@ -24,7 +24,6 @@ export const userSlice = createSlice({
       state.name = name;
       state.email = email;
       state.logged = logged;
-
       if (typeof window !== "undefined") {
         localStorage.setItem(
           "LuppoTw-User",
@@ -38,12 +37,24 @@ export const userSlice = createSlice({
       state.email = "";
       state.logged = false;
 
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined")
         localStorage.removeItem("LuppoTw-User");
+    },
+
+    getUser: state => {
+      if (typeof window !== "undefined") {
+        const data = localStorage.getItem("LuppoTw-User") || "{}";
+        const user = JSON.parse(data);
+        if (user?.name) {
+          state._id = user._id;
+          state.name = user.name;
+          state.email = user.email;
+          state.logged = true;
+        }
       }
     }
   }
 });
 
-export const { setUser, logout } = userSlice.actions;
+export const { setUser, logout, getUser } = userSlice.actions;
 export default userSlice.reducer;

@@ -14,13 +14,14 @@ const config: Config = {
     extend: {
       colors: {
         "default-black": "#252525",
-        "default-white": "#F2F2F2",
+        "default-white": "#E6E6E6",
         "card-black": "#1A1A1A",
         "card-light": "#FAFAFA",
         placeholder: "#B3B3B3",
         primary: "#7B1D20",
         "primary-dark": "#400305",
-        "primary-light": "#FF7B7F"
+        "primary-light": "#FF7B7F",
+        "custom-blue": "#475993"
       },
       boxShadow: {
         default: "0px 4px 10px rgba(0, 0, 0, 0.25)"

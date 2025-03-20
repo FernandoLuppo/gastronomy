@@ -4,8 +4,6 @@ import { La_Belle_Aurore, Libre_Baskerville } from "next/font/google";
 import { ReactNode } from "react";
 import "../../globals.css";
 import { ReduxProvider } from "@/shared/lib/provider";
-import { ThemeProvider } from "next-themes";
-import { Footer, HeaderLoggedIn } from "@/shared/components";
 import { Toaster } from "react-hot-toast";
 
 const laBelleAurore = La_Belle_Aurore({
@@ -34,12 +32,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className={`${inter.className} ${laBelleAurore.variable} ${libreBaskerville.variable} dark:bg-default-black bg-default-white dark:text-default-white text-default-black`}
       >
         <ReduxProvider>
-          <ThemeProvider attribute="class">
-            <HeaderLoggedIn isHome={false} />
-            <Toaster />
-            {children}
-            <Footer />
-          </ThemeProvider>
+          <Toaster />
+          {children}
         </ReduxProvider>
       </body>
     </html>

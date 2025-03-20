@@ -15,7 +15,15 @@ const handleForm = () => {
     securityCode: ""
   };
 
-  return useAuthForm({ defaultValues, authSchema: checkSecurityCodeSchema });
+  const form = useAuthForm({
+    defaultValues,
+    authSchema: checkSecurityCodeSchema
+  });
+  return {
+    ...form,
+    errors: form.formState.errors,
+    isSubmitting: form.formState.isSubmitting
+  };
 };
 
 const submitData = async ({
@@ -24,7 +32,7 @@ const submitData = async ({
   route
 }: IRecoverPasswordCheckSecurityCodeBody) => {
   try {
-    const securityCodeToken = await useToken.get({ tokenName: "emailToken" });
+    const securityCodeToken = useToken.get({ tokenName: "emailToken" });
 
     if (!securityCodeToken.success) throw new Error(securityCodeToken.error);
 
@@ -36,7 +44,7 @@ const submitData = async ({
     });
     if (!success) return toast.error(error as string);
 
-    return route.push("/recover-password/new-password");
+    if (route) return route.push("/recover-password/new-password");
   } catch (error) {
     console.log(error);
   } finally {

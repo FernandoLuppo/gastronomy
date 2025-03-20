@@ -37,7 +37,6 @@ export const tokenAuthentication = {
           secret: 'accessToken',
           token: tokenExtracted.accessToken
         })
-
       if (accessTokenValidate) return next()
 
       const refreshTokenValidate: TokenValidationResult =

@@ -38,7 +38,7 @@ const recoverPasswordController = {
 
       const { emailToken } = await recoverPassword.checkCodeService({
         securityCode,
-        tokenCode,
+        tokenCode: tokenCode as string,
         userId
       })
 

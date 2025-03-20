@@ -7,9 +7,7 @@ import { CustomError, handleError } from '../../utils/error'
 const RecipesController = {
   homeContentRecommended: async (req: Request, res: Response) => {
     try {
-      console.log('TEST01')
       const { list } = await recipesService.getRecommendRecipes()
-      console.log('TEST')
       res.status(STATUS_CODE.SUCCESS).send({ success: true, list })
     } catch (error) {
       handleError({ error, res })

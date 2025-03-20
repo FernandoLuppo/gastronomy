@@ -13,7 +13,15 @@ const handleForm = () => {
     confirmPassword: ""
   };
 
-  return useAuthForm({ defaultValues, authSchema: newPasswordSchema });
+  const form = useAuthForm({
+    defaultValues,
+    authSchema: newPasswordSchema
+  });
+  return {
+    ...form,
+    errors: form.formState.errors,
+    isSubmitting: form.formState.isSubmitting
+  };
 };
 
 const submitData = async ({
@@ -22,9 +30,8 @@ const submitData = async ({
   route
 }: IRecoverPasswordNewPasswordBody) => {
   try {
-    const newPasswordToken = await useToken.get({ tokenName: "emailToken" });
+    const newPasswordToken = useToken.get({ tokenName: "emailToken" });
     if (!newPasswordToken.success) throw new Error(newPasswordToken.error);
-
     const { success, error } = await useApi({
       url: "/recover-password/new-password",
       method: "PATCH",
@@ -34,7 +41,7 @@ const submitData = async ({
     if (!success) return toast.error(error as string);
 
     useToken.clear({ tokenName: "emailToken" });
-    return route.push("/login");
+    if (route) return route.push("/login");
   } catch (error) {
     console.log(error);
   } finally {

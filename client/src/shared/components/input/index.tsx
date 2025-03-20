@@ -1,10 +1,11 @@
 import clsx from "clsx";
 import { InputEye } from "./components/inputEye";
+import { FieldError } from "react-hook-form";
 
 interface IInput extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   id: string;
-  errors: { message: string };
+  errors: FieldError | undefined;
   register: object;
   passwordType?: "password" | "conformPassword";
 }
@@ -31,10 +32,12 @@ export const Input = ({
           {...other}
           {...register}
           className={clsx(
-            "w-full h-12 p-3 rounded-lg shadow-default bg-card-light text-default-black",
+            "w-full h-12 p-3 rounded-lg shadow-default",
+            "bg-default-white text-default-black ",
+            "dark:bg-card-dark ",
             {
               "border-red-500": errors,
-              "border-gray-300": !errors,
+              "border-gray-300 dark:border-gray-600": !errors,
               "pr-12": other.type === "password"
             }
           )}

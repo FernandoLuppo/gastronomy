@@ -34,21 +34,7 @@ const registerSchema = baseUserSchema.shape({
 
 const loginSchema = baseUserSchema.pick(['email', 'password'])
 
-const updateUserInfosSchema = baseUserSchema.shape({
-  confirmPassword: yup
-    .string()
-    .required('Confirm Password field is required.')
-    .oneOf([yup.ref('password')], 'Passwords must match.'),
-
-  oldPassword: yup
-    .string()
-    .required('Old Password field is required.')
-    .min(8, 'Old Password must be at least 8 characters long.')
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
-      'Must contain 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character.'
-    )
-})
+const updateUserInfosSchema = baseUserSchema
 
 const checkEmailSchema = baseUserSchema.pick(['email'])
 

@@ -9,9 +9,17 @@ interface IButton extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   alt?: string;
   socialMedia?: "google" | "github";
   onClick?: () => void;
+  bgColor?: string;
 }
 
-export const Button = ({ text, src, alt, socialMedia, onClick }: IButton) => {
+export const Button = ({
+  text,
+  src,
+  alt,
+  socialMedia,
+  onClick,
+  bgColor
+}: IButton) => {
   return (
     <motion.button
       className={clsx(
@@ -25,6 +33,7 @@ export const Button = ({ text, src, alt, socialMedia, onClick }: IButton) => {
       )}
       onClick={onClick}
       {...linkHoverTap}
+      style={{ backgroundColor: bgColor }}
     >
       {src && alt && (
         <Image

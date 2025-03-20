@@ -108,8 +108,6 @@ export const tokenService = {
       content: IPayload
     }
 
-    console.log('validateToken.decodedToken ---> ', { decodedToken })
-
     req.authenticatedUser = {
       token: {
         sub: decodedToken.sub,

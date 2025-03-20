@@ -8,11 +8,10 @@ interface ISocialLogin {
 
 const socialLoginService = {
   login: async ({ email, name }: ISocialLogin) => {
-    const userLogin = await userService.login({
+    const userLogin = await userService.socialLogin({
       email,
       socialLogin: true
     })
-
     if (!userLogin.success) {
       const newPassword = randomPasswordGenerator()
       const userRegister = await userService.register({
