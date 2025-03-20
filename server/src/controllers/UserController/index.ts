@@ -24,7 +24,7 @@ export const userController = {
     try {
       const { email, password } = req.body
 
-      const { userTokens } = await userService.login({
+      const { userTokens, user } = await userService.login({
         email,
         password
       })
@@ -47,7 +47,7 @@ export const userController = {
           httpOnly,
           sameSite: 'lax'
         })
-        .send({ success: true })
+        .send({ success: true, user })
     } catch (error) {
       handleError({ error, res })
     }
@@ -81,10 +81,10 @@ export const userController = {
   updatePersonalInfos: async (req: Request, res: Response) => {
     try {
       const data = req.body
-      const _id = req.authenticatedUser.token.sub
+      const password = req.authenticatedUser.token.sub
 
       const { user } = await userService.updatePersonalInfos({
-        _id,
+        password,
         data
       })
 
@@ -106,11 +106,6 @@ export const userController = {
     }
   },
 
-  logout: async (res: Response) => {
-    return res
-      .clearCookie('accessToken')
-      .clearCookie('refreshToken')
-      .status(STATUS_CODE.NO_CONTENT)
-      .send()
-  }
+  logout: (req: Request, res: Response) =>
+    res.status(STATUS_CODE.SUCCESS).send({ success: true })
 }

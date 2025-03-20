@@ -10,6 +10,12 @@ export interface IRegisterFormValues {
   confirmPassword: string;
 }
 
+export interface IUpdateUserInfosValues {
+  name: string;
+  email: string;
+  password: string;
+}
+
 export interface IRecoverPasswordCheckEmailFormValues {
   email: string;
 }

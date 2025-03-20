@@ -6,7 +6,7 @@ import { STATUS_CODE } from '../../../constants'
 import { CustomError } from '../../../utils/error'
 
 const githubSocialLogin = () => {
-  const { GHUB_CLIENT_ID, GHUB_CLIENT_SECRET } = process.env
+  const { GHUB_CLIENT_ID, GHUB_CLIENT_SECRET, API_URL } = process.env
   if (!GHUB_CLIENT_ID || !GHUB_CLIENT_SECRET)
     throw new CustomError({
       message: 'Github envs is missing',
@@ -18,7 +18,7 @@ const githubSocialLogin = () => {
       {
         clientID: GHUB_CLIENT_ID,
         clientSecret: GHUB_CLIENT_SECRET,
-        callbackURL: 'http://localhost:3000/social-login/auth/github/callback',
+        callbackURL: `${API_URL}/social-login/auth/github/callback`,
         scope: ['user:email']
       },
       (
@@ -27,7 +27,6 @@ const githubSocialLogin = () => {
         profile: unknown,
         done: (item: null, profile: unknown) => void
       ) => {
-        // console.log({ profile })
         done(null, profile)
       }
     )

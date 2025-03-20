@@ -1,18 +1,16 @@
 import cookies from "js-cookie";
-import { RedirectType } from "next/navigation";
 
 interface IUseToken {
   tokenName: string;
 }
 
-interface IValid {
+export interface IValid {
   token: { name: string; value: string } | undefined;
-  redirect: ((url: string, type?: RedirectType) => never) | boolean;
 }
 
 const useToken = {
-  get: async ({ tokenName }: IUseToken) => {
-    const token = await cookies.get(tokenName);
+  get: ({ tokenName }: IUseToken) => {
+    const token = cookies.get(tokenName);
     if (!token) return { success: false, error: "Token is missing" };
     return { success: true, token };
   },
@@ -22,12 +20,12 @@ const useToken = {
     return { success: true };
   },
 
-  valid: async ({ token, redirect }: IValid) => {
+  valid: async ({ token }: IValid) => {
     try {
       if (!token) throw new Error("Token is missing");
 
       const response = await fetch(
-        `http://localhost:3001/api/token?token=${JSON.stringify(token)}`,
+        `${process.env.NEXT_PUBLIC_URL}/api/token?token=${JSON.stringify(token)}`,
         {
           method: "GET"
         }
@@ -36,11 +34,10 @@ const useToken = {
       if (!data || !data.success)
         throw new Error("Error during token validation!");
 
-      return data;
+      return { token: data.token, success: true };
     } catch (error) {
-      console.log(error);
-      if (!redirect) return;
-      if (typeof redirect === "function") return redirect("/login");
+      console.error(error);
+      return { success: false, error };
     }
   }
 };

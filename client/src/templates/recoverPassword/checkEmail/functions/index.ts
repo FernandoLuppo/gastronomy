@@ -15,7 +15,12 @@ const handleForm = () => {
     email: ""
   };
 
-  return useAuthForm({ defaultValues, authSchema: checkEmailSchema });
+  const form = useAuthForm({ defaultValues, authSchema: checkEmailSchema });
+  return {
+    ...form,
+    errors: form.formState.errors,
+    isSubmitting: form.formState.isSubmitting
+  };
 };
 
 const submitData = async ({
@@ -32,7 +37,7 @@ const submitData = async ({
 
     if (!success) return toast.error(error as string);
 
-    route.push("/recover-password/security-code");
+    if (route) return route.push("/recover-password/security-code");
   } catch (error) {
     console.log(error);
   } finally {

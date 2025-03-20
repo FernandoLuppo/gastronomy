@@ -6,7 +6,7 @@ import { STATUS_CODE } from '../../../constants'
 import { CustomError } from '../../../utils/error'
 
 const googleSocialLoginConfig = () => {
-  const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env
+  const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, API_URL } = process.env
   if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET)
     throw new CustomError({
       message: 'Google envs is missing',
@@ -18,7 +18,7 @@ const googleSocialLoginConfig = () => {
       {
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: 'http://localhost:3000/social-login/auth/google/callback'
+        callbackURL: `${API_URL}/social-login/auth/google/callback`
       },
       (accessToken, refreshToken, profile, done) => done(null, profile)
     )

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { La_Belle_Aurore } from "next/font/google";
 import { ReactNode } from "react";
-import "../../globals.css";
+import "../globals.css";
 import { ReduxProvider } from "@/shared/lib/provider";
 import { HeaderLoggedOut } from "@/shared/components";
 import { ThemeProvider } from "next-themes";
@@ -24,7 +24,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <head></head>
       <body
         className={`${inter.className} ${laBelleAurore.variable} dark:bg-default-black bg-default-white dark:text-default-white text-default-black`}
       >

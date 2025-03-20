@@ -9,7 +9,7 @@ const { ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE, HTTP_ONLY, WEBSITE_URL } =
   process.env
 const httpOnly = HTTP_ONLY === 'true' ? true : false
 
-const redirectUrl = WEBSITE_URL as string
+const redirectUrl = `${WEBSITE_URL as string}/social-callback`
 
 const socialLoginController = {
   googleSuccess: async (req: Request, res: Response) => {

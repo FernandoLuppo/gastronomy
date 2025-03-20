@@ -14,8 +14,6 @@ const initDb = () => {
       break
   }
 
-  console.log({ mongoURI })
-
   if (mongoURI) {
     mongoose
       .connect(mongoURI, {

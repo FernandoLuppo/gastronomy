@@ -15,7 +15,15 @@ const handleForm = () => {
     confirmPassword: ""
   };
 
-  return useAuthForm({ defaultValues, authSchema: registerSchema });
+  const form = useAuthForm({
+    defaultValues,
+    authSchema: registerSchema
+  });
+  return {
+    ...form,
+    errors: form.formState.errors,
+    isSubmitting: form.formState.isSubmitting
+  };
 };
 
 const submitData = async ({ reset, route, body }: IRegisterBody) => {
@@ -27,7 +35,7 @@ const submitData = async ({ reset, route, body }: IRegisterBody) => {
     });
     if (!success) return toast.error(error as string);
 
-    route.push("/login");
+    if (route) return route.push("/login");
   } catch (error) {
     console.log(error);
   } finally {

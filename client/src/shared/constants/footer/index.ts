@@ -1,10 +1,7 @@
 const FOOTER_LINKS = {
   quickLinks: [
-    { title: "Diet", link: "/diet" },
-    { title: "Health", link: "/health" },
     { title: "Cuisine Type", link: "/cuisine-type" },
-    { title: "Meal Type", link: "/meal-type" },
-    { title: "Dish Type", link: "dish-type" }
+    { title: "Meal Type", link: "/meal-type" }
   ],
   socialMedia: [
     {

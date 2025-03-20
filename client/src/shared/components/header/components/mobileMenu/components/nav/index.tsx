@@ -5,11 +5,16 @@ import { RootState } from "@/shared/lib/store";
 import Link from "next/link";
 import { useState } from "react";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../../../nav/components/userMenu/components/menu/functions";
+import { useRouter } from "next/navigation";
 
 export const NavMobile = () => {
   const [showRecipes, setShowRecipes] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
   const { userReducer } = useSelector((state: RootState) => state);
 
   const recipesArrow = showRecipes ? (
@@ -32,10 +37,15 @@ export const NavMobile = () => {
           {showUserMenu && (
             <ul className="p-5 flex flex-col gap-5">
               <li>
-                <Link href="">Profile</Link>
+                <Link href="/profile">Profile</Link>
               </li>
               <li>
-                <Link href="/">Logout</Link>
+                <button
+                  className=""
+                  onClick={async () => await logoutUser(dispatch, router)}
+                >
+                  Log Out
+                </button>
               </li>
             </ul>
           )}

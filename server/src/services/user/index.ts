@@ -11,9 +11,9 @@ interface ILogin {
 }
 
 interface IUpdatePersonalInfos {
-  name?: string
-  email?: string
-  password?: string
+  name: string
+  email: string
+  password: string
 }
 
 export const userService = {
@@ -30,41 +30,22 @@ export const userService = {
 
   updatePersonalInfos: async ({
     data,
-    _id
+    password
   }: {
     data: IUpdatePersonalInfos
-    _id: string
+    password: string
   }) => {
-    if (data.password) {
-      const { encryptedUserPassword } = encrypt({ password: data.password })
-      data.password = encryptedUserPassword
-    }
-
-    const newData = {
-      ...(data.name && { name: data.name }),
-      ...(data.email && { email: data.email }),
-      ...(data.password && { password: data.password })
-    }
-
-    const user = await User.findOneAndUpdate(
-      { _id },
-      {
-        $set: newData
-      },
+    const updatedUser = await User.findByIdAndUpdate(
+      { email: data.email, password },
+      { $set: { name: data.name } },
       { new: true }
     ).select('-password')
-    if (!user)
-      throw new CustomError({
-        message: 'User not found!',
-        statusCode: STATUS_CODE.BAD_REQUEST
-      })
 
-    return { user }
+    return { user: updatedUser }
   },
 
-  login: async ({ email, password, socialLogin }: ILogin) => {
+  login: async ({ email, password }: ILogin) => {
     const user = await User.findOne({ email }).select('name email password')
-    if (socialLogin && !user) return { success: false }
 
     if (!user)
       throw new CustomError({
@@ -72,13 +53,10 @@ export const userService = {
         statusCode: STATUS_CODE.BAD_REQUEST
       })
 
-    if (!socialLogin) {
-      await decrypt({
-        password: password as string,
-        comparePassword: user.password as string
-      })
-    }
-
+    await decrypt({
+      password: password as string,
+      comparePassword: user.password as string
+    })
     delete user?.password
 
     const userTokens = await tokenService.createUserToken({
@@ -86,7 +64,23 @@ export const userService = {
       content: user
     })
 
-    return { userTokens: { tokens: userTokens.tokens } }
+    return { userTokens: { tokens: userTokens.tokens }, success: true, user }
+  },
+
+  socialLogin: async ({ email, socialLogin }: ILogin) => {
+    const user = await User.findOne({ email }).select('name email')
+    if (socialLogin && !user) return { success: false }
+    if (!user)
+      throw new CustomError({
+        message: 'User not find!',
+        statusCode: STATUS_CODE.BAD_REQUEST
+      })
+
+    const userTokens = await tokenService.createUserToken({
+      _id: user._id.toString(),
+      content: user
+    })
+    return { userTokens: { tokens: userTokens.tokens }, success: true }
   },
 
   register: async ({

@@ -1,4 +1,4 @@
-import LoginTemplate from "../../../../templates/login";
+import LoginTemplate from "../../../templates/login";
 
 const Login = () => {
   return <LoginTemplate />;
